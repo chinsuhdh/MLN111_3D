@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Con Người trong Triết học Mác – Lênin & Tư tưởng Hồ Chí Minh</title>
+  <meta name="description" content="Nghiên cứu học thuật về quan niệm con người trong Triết học Mác – Lênin và Tư tưởng Hồ Chí Minh – quan hệ cá nhân xã hội, quần chúng nhân dân, lãnh tụ và quan điểm của Đảng." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy:   { DEFAULT: '#1E3A5F', light: '#2A4F80', dark: '#152B47' },
+            dred:   { DEFAULT: '#8B1E3F', light: '#A52348', dark: '#6D1832' },
+            beige:  { DEFAULT: '#D4A373', light: '#E0BF9A', dark: '#B88A5A' },
+            bg:     '#F8F9FA',
+            body:   '#1F2937',
+          },
+          fontFamily: {
+            serif:  ['"Playfair Display"', 'Georgia', 'serif'],
+            sans:   ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            card:   '0 2px 20px rgba(30,58,95,0.08)',
+            hover:  '0 12px 40px rgba(30,58,95,0.18)',
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* ─── Base ─────────────────────────────── */
+    * { box-sizing: border-box; }
+    html { font-family: 'Inter', sans-serif; background: #F8F9FA; color: #1F2937; }
+
+    /* ─── Progress bar ─────────────────────── */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+      background: linear-gradient(90deg, #1E3A5F, #8B1E3F, #D4A373);
+      z-index: 9999; transition: width 0.1s linear;
+    }
+
+    /* ─── Navbar glass ─────────────────────── */
+    #navbar {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(248,249,250,0.92);
+      border-bottom: 1px solid rgba(30,58,95,0.08);
+    }
+
+    /* ─── Smooth scroll offset ─────────────── */
+    section[id] { scroll-margin-top: 72px; }
+
+    /* ─── Card glassmorphism ────────────────── */
+    .glass-card {
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(30,58,95,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 48px rgba(30,58,95,0.16);
+      border-color: rgba(139,30,63,0.25);
+    }
+
+    /* ─── Accordion ────────────────────────── */
+    .acc-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+    }
+    .acc-body.open { max-height: 600px; }
+    .acc-icon { transition: transform 0.35s ease; }
+    .acc-icon.open { transform: rotate(45deg); }
+
+    /* ─── Quote shimmer ────────────────────── */
+    @keyframes shimmer {
+      0%   { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    .quote-text {
+      background: linear-gradient(90deg, #ffffff 30%, #D4A373 50%, #ffffff 70%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 6s linear infinite;
+    }
+
+    /* ─── Fade-in on scroll ─────────────────── */
+    .fade-up {
+      opacity: 0; transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+    /* ─── Mobile menu ───────────────────────── */
+    #mobile-menu {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    #mobile-menu.open { max-height: 400px; }
+
+    /* ─── SVG animation ─────────────────────── */
+    @keyframes pulse-circle {
+      0%, 100% { r: 6; opacity: 0.7; }
+      50%       { r: 9; opacity: 1; }
+    }
+    @keyframes draw-line {
+      from { stroke-dashoffset: 300; }
+      to   { stroke-dashoffset: 0; }
+    }
+    .svg-node { animation: pulse-circle 3s ease-in-out infinite; }
+    .svg-line {
+      stroke-dasharray: 300;
+      animation: draw-line 2.5s ease forwards;
+    }
+    @keyframes orbit {
+      from { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+      to   { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+    }
+    .orbit-dot { animation: orbit 8s linear infinite; transform-origin: 200px 200px; }
+
+    /* ─── Hero gradient text ────────────────── */
+    .hero-title-accent {
+      background: linear-gradient(135deg, #1E3A5F 0%, #8B1E3F 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ─── Bento card accent line ────────────── */
+    .accent-top { border-top: 3px solid #8B1E3F; }
+    .accent-left { border-left: 4px solid #1E3A5F; }
+
+    /* ─── Section divider ───────────────────── */
+    .section-eyebrow {
+      letter-spacing: 0.15em;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: #8B1E3F;
+    }
+  </style>
+</head>
+<body class="bg-bg text-body font-sans antialiased">
+
+<!-- ═══════════════════════════════════════════
+     PROGRESS BAR
+═══════════════════════════════════════════ -->
+<div id="progress-bar"></div>
+
+<!-- ═══════════════════════════════════════════
+     STICKY NAVBAR
+═══════════════════════════════════════════ -->
+<nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a href="#hero" class="flex items-center gap-2 group" id="nav-logo">
+        <span class="w-7 h-7 rounded-full flex items-center justify-center"
+              style="background: linear-gradient(135deg,#1E3A5F,#8B1E3F)">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="3" fill="white" opacity="0.9"/>
+            <circle cx="7" cy="7" r="6" stroke="white" stroke-width="1" opacity="0.4" fill="none"/>
+          </svg>
+        </span>
+        <span class="font-serif font-bold text-navy text-base leading-tight group-hover:text-dred transition-colors duration-200">
+          Tư Tưởng<br><span class="text-xs font-sans font-medium text-body opacity-60">Học Thuật</span>
+        </span>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <ul class="hidden md:flex items-center gap-1" id="nav-links">
+        <li><a href="#section-canhan-xahoi" class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-body hover:text-navy hover:bg-navy/5 transition-all duration-200">Cá nhân &amp; Xã hội</a></li>
+        <li><a href="#section-quanchung" class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-body hover:text-navy hover:bg-navy/5 transition-all duration-200">Quần chúng</a></li>
+        <li><a href="#section-hcm" class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-body hover:text-navy hover:bg-navy/5 transition-all duration-200">Tư tưởng HCM</a></li>
+        <li><a href="#section-dang" class="nav-link px-3 py-2 rounded-lg text-sm font-medium text-body hover:text-navy hover:bg-navy/5 transition-all duration-200">Quan điểm Đảng</a></li>
+      </ul>
+
+      <!-- Hamburger -->
+      <button id="hamburger-btn" aria-label="Mở menu" class="md:hidden p-2 rounded-lg hover:bg-navy/5 transition-colors">
+        <svg id="hamburger-icon" width="22" height="22" fill="none" stroke="#1E3A5F" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="19" y2="6"/>
+          <line x1="3" y1="11" x2="19" y2="11"/>
+          <line x1="3" y1="16" x2="19" y2="16"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="md:hidden border-t border-navy/10">
+    <div class="px-4 py-3 flex flex-col gap-1 bg-white/95">
+      <a href="#section-canhan-xahoi" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-body hover:text-navy hover:bg-navy/5 transition-all">Cá nhân &amp; Xã hội</a>
+      <a href="#section-quanchung" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-body hover:text-navy hover:bg-navy/5 transition-all">Quần chúng Nhân dân</a>
+      <a href="#section-hcm" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-body hover:text-navy hover:bg-navy/5 transition-all">Tư tưởng Hồ Chí Minh</a>
+      <a href="#section-dang" class="mobile-nav-link block px-3 py-2.5 rounded-lg text-sm font-medium text-body hover:text-navy hover:bg-navy/5 transition-all">Quan điểm Đảng</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     HERO SECTION
+═══════════════════════════════════════════ -->
+<section id="hero" class="min-h-screen flex items-center pt-20 pb-16 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+      <!-- Left: Text -->
+      <div class="fade-up">
+        <p class="section-eyebrow mb-5">Triết học Mác – Lênin · Tư tưởng Hồ Chí Minh</p>
+
+        <h1 class="font-serif font-bold leading-tight mb-6" style="font-size: clamp(2rem, 5vw, 3.2rem); color: #1E3A5F;">
+          CON NGƯỜI<br/>
+          <span class="hero-title-accent">TRONG TRIẾT HỌC</span><br/>
+          <span style="-webkit-text-fill-color: #1E3A5F;">MÁC – LÊNIN &amp;</span><br/>
+          <em class="font-serif" style="font-style:italic; -webkit-text-fill-color: #8B1E3F;">Tư tưởng Hồ Chí Minh</em>
+        </h1>
+
+        <p class="text-base sm:text-lg leading-relaxed text-body/70 mb-8 max-w-lg">
+          Nghiên cứu toàn diện về quan niệm con người — từ bản chất xã hội, quan hệ cá nhân–xã hội đến vai trò quần chúng nhân dân và lãnh tụ trong lịch sử.
+        </p>
+
+        <!-- Quote block -->
+        <blockquote class="border-l-4 pl-4 mb-8 italic font-serif text-sm text-body/60" style="border-color: #D4A373;">
+          "Con người là tổng hòa của các quan hệ xã hội."<br/>
+          <cite class="font-sans not-italic text-xs font-medium" style="color:#8B1E3F;">— Karl Marx</cite>
+        </blockquote>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="#section-canhan-xahoi" id="cta-primary"
+             class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+             style="background: linear-gradient(135deg, #1E3A5F, #2A4F80);">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+            Khám phá nội dung
+          </a>
+          <a href="#section-hcm" id="cta-secondary"
+             class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 hover:shadow-md hover:-translate-y-0.5"
+             style="color: #8B1E3F; border: 2px solid #8B1E3F; background: transparent;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Xem tư tưởng Hồ Chí Minh
+          </a>
+        </div>
+
+        <!-- Stats row -->
+        <div class="mt-10 pt-8 border-t border-navy/10 grid grid-cols-3 gap-4">
+          <div>
+            <p class="font-serif font-bold text-2xl text-navy">4</p>
+            <p class="text-xs text-body/50 mt-0.5">Chủ đề lớn</p>
+          </div>
+          <div>
+            <p class="font-serif font-bold text-2xl" style="color:#8B1E3F;">12</p>
+            <p class="text-xs text-body/50 mt-0.5">Luận điểm</p>
+          </div>
+          <div>
+            <p class="font-serif font-bold text-2xl" style="color:#D4A373;">∞</p>
+            <p class="text-xs text-body/50 mt-0.5">Giá trị thực tiễn</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Abstract SVG Illustration -->
+      <div class="fade-up flex items-center justify-center" style="transition-delay:0.2s;">
+        <div class="relative w-full max-w-md mx-auto">
+          <!-- Decorative background blobs -->
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="w-72 h-72 rounded-full opacity-8"
+                 style="background: radial-gradient(circle, rgba(30,58,95,0.12) 0%, transparent 70%);"></div>
+          </div>
+          <div class="absolute top-8 right-8 w-32 h-32 rounded-full opacity-10 pointer-events-none"
+               style="background: radial-gradient(circle, rgba(139,30,63,0.3) 0%, transparent 70%);"></div>
+
+          <svg id="hero-svg" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg"
+               class="w-full h-auto drop-shadow-xl" role="img" aria-label="Minh họa trừu tượng học thuật">
+
+            <!-- Outer decorative rings -->
+            <circle cx="200" cy="200" r="175" stroke="#1E3A5F" stroke-width="0.5" stroke-dasharray="8 6" opacity="0.18"/>
+            <circle cx="200" cy="200" r="145" stroke="#8B1E3F" stroke-width="0.5" stroke-dasharray="4 8" opacity="0.12"/>
+            <circle cx="200" cy="200" r="110" stroke="#1E3A5F" stroke-width="1" stroke-dasharray="2 5" opacity="0.15"/>
+
+            <!-- Core circle -->
+            <circle cx="200" cy="200" r="42" fill="url(#core-grad)" opacity="0.95"/>
+            <circle cx="200" cy="200" r="42" stroke="#1E3A5F" stroke-width="1.5" opacity="0.4" fill="none"/>
+
+            <!-- Inner symbol: stylized human/people mark -->
+            <circle cx="200" cy="186" r="10" fill="white" opacity="0.9"/>
+            <path d="M185 215 Q200 205 215 215" stroke="white" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.9"/>
+
+            <!-- Satellite nodes -->
+            <!-- Node 1: top -->
+            <circle cx="200" cy="52" r="18" fill="#1E3A5F" opacity="0.9"/>
+            <circle cx="200" cy="52" r="18" stroke="#D4A373" stroke-width="1.5" fill="none" opacity="0.6"/>
+            <text x="200" y="57" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white" opacity="0.9">Cá nhân</text>
+
+            <!-- Node 2: bottom-right -->
+            <circle cx="340" cy="290" r="18" fill="#8B1E3F" opacity="0.9"/>
+            <circle cx="340" cy="290" r="18" stroke="#D4A373" stroke-width="1.5" fill="none" opacity="0.6"/>
+            <text x="340" y="295" text-anchor="middle" font-family="Inter" font-size="9" font-weight="600" fill="white" opacity="0.9">Xã hội</text>
+
+            <!-- Node 3: bottom-left -->
+            <circle cx="60" cy="290" r="18" fill="#2A4F80" opacity="0.9"/>
+            <circle cx="60" cy="290" r="18" stroke="#D4A373" stroke-width="1.5" fill="none" opacity="0.6"/>
+            <text x="60" y="295" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="white" opacity="0.9">Nhân dân</text>
+
+            <!-- Node 4: right -->
+            <circle cx="370" cy="140" r="14" fill="#8B1E3F" opacity="0.7"/>
+            <text x="370" y="145" text-anchor="middle" font-family="Inter" font-size="8" fill="white" opacity="0.9">Giai cấp</text>
+
+            <!-- Node 5: left -->
+            <circle cx="30" cy="140" r="14" fill="#1E3A5F" opacity="0.7"/>
+            <text x="30" y="145" text-anchor="middle" font-family="Inter" font-size="8" fill="white" opacity="0.9">Lịch sử</text>
+
+            <!-- Node 6: bottom -->
+            <circle cx="200" cy="356" r="14" fill="#D4A373" opacity="0.85"/>
+            <text x="200" y="361" text-anchor="middle" font-family="Inter" font-size="8" font-weight="600" fill="#1E3A5F" opacity="0.95">Hạnh phúc</text>
+
+            <!-- Connecting lines (core to satellites) -->
+            <line x1="200" y1="158" x2="200" y2="70" stroke="#1E3A5F" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.35" class="svg-line"/>
+            <line x1="228" y1="228" x2="326" y2="278" stroke="#8B1E3F" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.35" class="svg-line"/>
+            <line x1="172" y1="228" x2="76" y2="278" stroke="#2A4F80" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.35" class="svg-line"/>
+            <line x1="240" y1="188" x2="357" y2="148" stroke="#8B1E3F" stroke-width="1" stroke-dasharray="3 4" opacity="0.25"/>
+            <line x1="160" y1="188" x2="43" y2="148" stroke="#1E3A5F" stroke-width="1" stroke-dasharray="3 4" opacity="0.25"/>
+            <line x1="200" y1="242" x2="200" y2="342" stroke="#D4A373" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.4" class="svg-line"/>
+
+            <!-- Cross-satellite connections -->
+            <line x1="214" y1="65" x2="325" y2="276" stroke="#1E3A5F" stroke-width="0.8" stroke-dasharray="3 6" opacity="0.15"/>
+            <line x1="186" y1="65" x2="75" y2="276" stroke="#8B1E3F" stroke-width="0.8" stroke-dasharray="3 6" opacity="0.15"/>
+            <line x1="322" y1="280" x2="75" y2="280" stroke="#D4A373" stroke-width="0.8" stroke-dasharray="3 6" opacity="0.2"/>
+
+            <!-- Small accent dots scattered -->
+            <circle cx="155" cy="120" r="3.5" fill="#D4A373" opacity="0.55" class="svg-node" style="animation-delay:0.5s"/>
+            <circle cx="265" cy="108" r="3" fill="#8B1E3F" opacity="0.5" class="svg-node" style="animation-delay:1s"/>
+            <circle cx="310" cy="210" r="4" fill="#1E3A5F" opacity="0.45" class="svg-node" style="animation-delay:1.5s"/>
+            <circle cx="95" cy="225" r="3.5" fill="#D4A373" opacity="0.5" class="svg-node" style="animation-delay:0.8s"/>
+            <circle cx="138" cy="315" r="3" fill="#8B1E3F" opacity="0.45" class="svg-node" style="animation-delay:1.3s"/>
+            <circle cx="262" cy="320" r="3" fill="#1E3A5F" opacity="0.4" class="svg-node" style="animation-delay:0.3s"/>
+
+            <!-- Corner flourishes -->
+            <path d="M20 20 Q20 35 35 35" stroke="#1E3A5F" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.2"/>
+            <path d="M380 20 Q380 35 365 35" stroke="#8B1E3F" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.2"/>
+            <path d="M20 380 Q20 365 35 365" stroke="#D4A373" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.3"/>
+            <path d="M380 380 Q380 365 365 365" stroke="#1E3A5F" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.2"/>
+
+            <!-- Definitions -->
+            <defs>
+              <radialGradient id="core-grad" cx="40%" cy="35%" r="70%">
+                <stop offset="0%" stop-color="#2A4F80"/>
+                <stop offset="100%" stop-color="#1E3A5F"/>
+              </radialGradient>
+            </defs>
+          </svg>
+
+          <!-- Caption -->
+          <p class="text-center text-xs text-body/40 mt-2 font-medium tracking-wider uppercase">
+            Mạng lưới quan hệ Con người – Xã hội – Lịch sử
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1: Cá nhân & Xã hội
+═══════════════════════════════════════════ -->
+<section id="section-canhan-xahoi" class="py-20 lg:py-28"
+         style="background: linear-gradient(180deg, #F8F9FA 0%, #F0F2F5 100%);">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Layout: sticky left + cards right -->
+    <div class="lg:grid lg:grid-cols-12 lg:gap-12">
+
+      <!-- Left: Sticky label + Quote -->
+      <div class="lg:col-span-4 mb-10 lg:mb-0">
+        <div class="lg:sticky lg:top-24">
+          <p class="section-eyebrow mb-3">Phần 01</p>
+          <h2 class="font-serif font-bold text-3xl sm:text-4xl leading-tight text-navy mb-5">
+            Quan hệ giữa<br/>Cá nhân<br/>&amp; Xã hội
+          </h2>
+          <div class="w-12 h-1 rounded mb-5" style="background: linear-gradient(90deg,#1E3A5F,#8B1E3F);"></div>
+          <blockquote class="pl-4 border-l-4 italic font-serif text-sm leading-relaxed text-body/65"
+                      style="border-color: #D4A373;">
+            "Con người tự làm nên lịch sử của mình, nhưng không phải làm theo ý muốn tùy tiện mà trong những hoàn cảnh trực tiếp đã có sẵn."
+            <cite class="block mt-2 not-italic font-sans text-xs font-semibold text-dred">— Karl Marx</cite>
+          </blockquote>
+          <p class="mt-5 text-sm text-body/55 leading-relaxed">
+            Biện chứng giữa cá nhân và xã hội là nền tảng trong triết học Mác–Lênin về bản chất con người.
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: 4 Cards Grid -->
+      <div class="lg:col-span-8">
+        <div class="grid sm:grid-cols-2 gap-5">
+
+          <!-- Card 1 -->
+          <div class="glass-card rounded-2xl p-6 fade-up" style="transition-delay:0.05s;">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                   style="background: rgba(30,58,95,0.1);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2">
+                  <circle cx="12" cy="8" r="4"/>
+                  <path d="M4 20v-2a8 8 0 0116 0v2"/>
+                </svg>
+              </div>
+              <p class="section-eyebrow" style="letter-spacing:0.1em;">Luận điểm 01</p>
+            </div>
+            <h3 class="font-serif font-bold text-lg text-navy mb-3">Sự thống nhất giữa cái chung và cái riêng</h3>
+            <p class="text-sm leading-relaxed text-body/70">
+              Con người vừa mang <strong>bản chất loài</strong> (lý trí, ngôn ngữ, lao động sáng tạo) vừa mang <strong>tính cá thể</strong> độc đáo. Cái chung tồn tại trong và thông qua cái riêng — không có cá nhân trừu tượng tách rời xã hội.
+            </p>
+            <div class="mt-4 pt-4 border-t border-navy/8 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full" style="background:#D4A373;"></span>
+              <span class="text-xs text-body/45 font-medium">Bản thể luận · Triết học Mác</span>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="glass-card rounded-2xl p-6 fade-up" style="transition-delay:0.15s;">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                   style="background: rgba(139,30,63,0.1);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B1E3F" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <p class="section-eyebrow" style="letter-spacing:0.1em; color:#8B1E3F;">Luận điểm 02</p>
+            </div>
+            <h3 class="font-serif font-bold text-lg text-navy mb-3">Cá nhân và xã hội không thể tách rời</h3>
+            <p class="text-sm leading-relaxed text-body/70">
+              Xã hội do cá nhân hợp thành, quan hệ giữa họ là <strong>tất yếu lịch sử</strong>. Cá nhân chỉ phát triển đầy đủ trong lòng xã hội; ngược lại, xã hội tiến bộ khi mỗi cá nhân được phát triển toàn diện.
+            </p>
+            <div class="mt-4 pt-4 border-t border-dred/8 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full" style="background:#8B1E3F;"></span>
+              <span class="text-xs text-body/45 font-medium">Quan hệ biện chứng · Tất yếu lịch sử</span>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="glass-card rounded-2xl p-6 fade-up" style="transition-delay:0.25s;">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                   style="background: rgba(212,163,115,0.15);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B88A5A" stroke-width="2">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+              <p class="section-eyebrow" style="letter-spacing:0.1em; color:#B88A5A;">Luận điểm 03</p>
+            </div>
+            <h3 class="font-serif font-bold text-lg text-navy mb-3">Tính giai cấp và tính nhân loại</h3>
+            <p class="text-sm leading-relaxed text-body/70">
+              Mỗi cá nhân mang <strong>tính giai cấp</strong> — phản ánh vị trí trong cơ cấu sản xuất — đồng thời mang <strong>giá trị chung nhân loại</strong>: tình yêu thương, lương tri, khát vọng tự do và hạnh phúc.
+            </p>
+            <div class="mt-4 pt-4 border-t border-beige/20 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full" style="background:#D4A373;"></span>
+              <span class="text-xs text-body/45 font-medium">Giai cấp · Giá trị phổ quát</span>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="glass-card rounded-2xl p-6 fade-up" style="transition-delay:0.35s;">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                   style="background: rgba(30,58,95,0.08);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <p class="section-eyebrow" style="letter-spacing:0.1em;">Luận điểm 04</p>
+            </div>
+            <h3 class="font-serif font-bold text-lg text-navy mb-3">Ý nghĩa phương pháp luận</h3>
+            <p class="text-sm leading-relaxed text-body/70">
+              Cần tránh hai khuynh hướng: <strong>đề cao quá mức cá nhân chủ nghĩa</strong> (bỏ qua trách nhiệm xã hội) hoặc <strong>tuyệt đối hóa xã hội</strong> (xóa bỏ quyền cá nhân). Con người phát triển hài hòa trong sự thống nhất biện chứng.
+            </p>
+            <div class="mt-4 pt-4 border-t border-navy/8 flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full" style="background:#1E3A5F;"></span>
+              <span class="text-xs text-body/45 font-medium">Phương pháp luận · Thực tiễn</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2: Quần chúng nhân dân & Lãnh tụ
+═══════════════════════════════════════════ -->
+<section id="section-quanchung" class="py-20 lg:py-28 bg-bg">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="text-center mb-14 fade-up">
+      <p class="section-eyebrow mb-3">Phần 02</p>
+      <h2 class="font-serif font-bold text-3xl sm:text-4xl text-navy mb-4">
+        Quần chúng Nhân dân &amp; Lãnh tụ
+      </h2>
+      <p class="text-body/60 max-w-xl mx-auto text-sm leading-relaxed">
+        Lực lượng sáng tạo lịch sử và vai trò dẫn dắt — mối quan hệ biện chứng không thể tách rời.
+      </p>
+      <div class="w-16 h-0.5 mx-auto mt-5" style="background: linear-gradient(90deg,#1E3A5F,#8B1E3F);"></div>
+    </div>
+
+    <!-- Bento Grid -->
+    <div class="grid lg:grid-cols-5 gap-5">
+
+      <!-- Big Card Left: Quần chúng nhân dân -->
+      <div class="lg:col-span-3 fade-up rounded-3xl overflow-hidden relative"
+           style="background: linear-gradient(135deg, #1E3A5F 0%, #152B47 60%, #0F1F35 100%); min-height: 400px;">
+        <!-- Decorative elements -->
+        <div class="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10"
+             style="background: radial-gradient(circle, #8B1E3F, transparent); transform: translate(30%, -30%);"></div>
+        <div class="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-8"
+             style="background: radial-gradient(circle, #D4A373, transparent); transform: translate(-30%, 30%);"></div>
+
+        <div class="relative z-10 p-8 sm:p-10 h-full flex flex-col justify-between">
+          <div>
+            <!-- Icon -->
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
+                 style="background: rgba(212,163,115,0.2); border: 1px solid rgba(212,163,115,0.3);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#D4A373" stroke-width="1.8">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+            </div>
+
+            <p class="text-beige text-xs font-semibold uppercase tracking-widest mb-3 opacity-70">Lực lượng cốt lõi</p>
+            <h3 class="font-serif font-bold text-3xl sm:text-4xl text-white mb-5 leading-tight">
+              Quần chúng<br/>Nhân dân
+            </h3>
+            <p class="text-white/65 text-sm leading-relaxed max-w-sm">
+              Theo chủ nghĩa Mác–Lênin, quần chúng nhân dân là chủ thể sáng tạo lịch sử, bao gồm những người lao động và tầng lớp tiến bộ xã hội.
+            </p>
+          </div>
+
+          <!-- 3 bullet features -->
+          <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="rounded-xl p-4" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);">
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center mb-2" style="background: rgba(212,163,115,0.25);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4A373" stroke-width="2.2"><path d="M12 20V10M5 20V4M19 20v-8"/></svg>
+              </div>
+              <p class="text-white text-xs font-semibold mb-1">Lực lượng sản xuất</p>
+              <p class="text-white/50 text-xs">Cơ bản nhất, trực tiếp tạo ra của cải vật chất</p>
+            </div>
+            <div class="rounded-xl p-4" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);">
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center mb-2" style="background: rgba(212,163,115,0.25);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4A373" stroke-width="2.2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              </div>
+              <p class="text-white text-xs font-semibold mb-1">Động lực cách mạng</p>
+              <p class="text-white/50 text-xs">Thúc đẩy mọi biến đổi xã hội tiến bộ</p>
+            </div>
+            <div class="rounded-xl p-4" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);">
+              <div class="w-7 h-7 rounded-lg flex items-center justify-center mb-2" style="background: rgba(212,163,115,0.25);">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4A373" stroke-width="2.2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
+              <p class="text-white text-xs font-semibold mb-1">Sáng tạo văn hóa</p>
+              <p class="text-white/50 text-xs">Nguồn gốc mọi giá trị văn hóa tinh thần</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: 2 Small Cards -->
+      <div class="lg:col-span-2 flex flex-col gap-5">
+
+        <!-- Card: Vai trò Lãnh tụ -->
+        <div class="glass-card rounded-3xl p-7 flex-1 fade-up accent-top" style="transition-delay:0.1s;">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+                 style="background: rgba(139,30,63,0.1);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8B1E3F" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <div>
+              <p class="section-eyebrow mb-1" style="color:#8B1E3F;">Vai trò quan trọng</p>
+              <h3 class="font-serif font-bold text-xl text-navy mb-3">Vai trò Lãnh tụ</h3>
+            </div>
+          </div>
+          <p class="text-sm leading-relaxed text-body/70 mt-2">
+            Lãnh tụ — những cá nhân xuất sắc được lịch sử lựa chọn — có nhiệm vụ <strong>định hướng tư tưởng</strong>, tổ chức phong trào và dẫn dắt quần chúng đến mục tiêu cách mạng. Lãnh tụ vĩ đại phải gắn bó máu thịt với nhân dân, phản ánh ý chí và nguyện vọng của họ.
+          </p>
+          <div class="mt-4 flex gap-2 flex-wrap">
+            <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:rgba(139,30,63,0.08); color:#8B1E3F;">Định hướng</span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:rgba(139,30,63,0.08); color:#8B1E3F;">Tổ chức</span>
+            <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:rgba(139,30,63,0.08); color:#8B1E3F;">Dẫn dắt</span>
+          </div>
+        </div>
+
+        <!-- Card: Mối quan hệ biện chứng -->
+        <div class="glass-card rounded-3xl p-7 flex-1 fade-up" style="transition-delay:0.2s; border-left: 4px solid #D4A373;">
+          <div class="flex items-start gap-4">
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+                 style="background: rgba(212,163,115,0.15);">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B88A5A" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 8v4M12 16h.01"/>
+              </svg>
+            </div>
+            <div>
+              <p class="section-eyebrow mb-1" style="color:#B88A5A;">Biện chứng</p>
+              <h3 class="font-serif font-bold text-xl text-navy mb-3">Mối quan hệ biện chứng</h3>
+            </div>
+          </div>
+          <p class="text-sm leading-relaxed text-body/70 mt-2">
+            Quần chúng và lãnh tụ thống nhất trong <strong>mục đích giải phóng</strong>. Nhân dân quyết định tiến trình lịch sử, lãnh tụ là người chắt lọc, thể hiện ý chí nhân dân và tìm ra con đường đúng đắn nhất.
+          </p>
+          <div class="mt-5 p-3 rounded-xl text-xs italic font-serif" style="background: rgba(212,163,115,0.1); color:#8B1E3F; border-left: 3px solid #D4A373;">
+            "Nhân dân quyết định · Lãnh tụ dẫn đường"
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3: Tư tưởng Hồ Chí Minh
+═══════════════════════════════════════════ -->
+<section id="section-hcm" class="py-20 lg:py-28 relative overflow-hidden">
+  <!-- Dark background -->
+  <div class="absolute inset-0" style="background: linear-gradient(135deg, #0F1F35 0%, #1E3A5F 40%, #3d0e1e 80%, #8B1E3F 100%);"></div>
+  <!-- Overlay pattern -->
+  <div class="absolute inset-0 opacity-5"
+       style="background-image: radial-gradient(circle at 20% 50%, #D4A373 1px, transparent 1px), radial-gradient(circle at 80% 50%, #D4A373 1px, transparent 1px); background-size: 60px 60px;"></div>
+
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Big Quote -->
+    <div class="text-center mb-16 fade-up">
+      <div class="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full"
+           style="background: rgba(212,163,115,0.15); border: 1px solid rgba(212,163,115,0.3);">
+        <span class="w-2 h-2 rounded-full" style="background:#D4A373;"></span>
+        <p class="section-eyebrow mb-0" style="color:#D4A373; letter-spacing:0.2em;">Phần 03 · Tư tưởng Hồ Chí Minh</p>
+      </div>
+
+      <!-- Giant quotation mark -->
+      <div class="font-serif text-8xl leading-none mb-2 opacity-20" style="color:#D4A373;">&ldquo;</div>
+
+      <blockquote class="max-w-4xl mx-auto">
+        <p class="quote-text font-serif font-bold leading-snug italic"
+           style="font-size: clamp(1.3rem, 3.5vw, 2.2rem);">
+          Chữ người, nghĩa hẹp là gia đình, anh em, họ hàng, bầu bạn. Nghĩa rộng là đồng bào cả nước. Rộng nữa là cả loài người.
+        </p>
+        <footer class="mt-6">
+          <cite class="font-sans not-italic text-sm font-semibold tracking-wider" style="color:#D4A373; opacity:0.85;">
+            — Hồ Chí Minh
+          </cite>
+        </footer>
+      </blockquote>
+    </div>
+
+    <!-- 4-column grid blocks -->
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 fade-up">
+
+      <!-- Block 1 -->
+      <div class="rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+           style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+             style="background: rgba(30,58,95,0.5); border: 1px solid rgba(30,58,95,0.8);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A373" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <p class="text-beige text-xs font-semibold uppercase tracking-widest mb-2 opacity-60">01</p>
+        <h4 class="font-serif font-bold text-white text-lg mb-3 leading-tight">Quan niệm về con người</h4>
+        <p class="text-white/55 text-xs leading-relaxed">
+          Con người là mục tiêu và động lực của sự nghiệp cách mạng. Giải phóng nhân dân, giai cấp và dân tộc là sứ mệnh tối cao, không thể tách rời nhau.
+        </p>
+      </div>
+
+      <!-- Block 2 -->
+      <div class="rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+           style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+             style="background: rgba(139,30,63,0.4); border: 1px solid rgba(139,30,63,0.6);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A373" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+          </svg>
+        </div>
+        <p class="text-beige text-xs font-semibold uppercase tracking-widest mb-2 opacity-60">02</p>
+        <h4 class="font-serif font-bold text-white text-lg mb-3 leading-tight">Giải phóng &amp; Hạnh phúc</h4>
+        <p class="text-white/55 text-xs leading-relaxed">
+          "Độc lập — Tự do — Hạnh phúc" là tư tưởng nhất quán. Hạnh phúc của nhân dân là thước đo thành công của cách mạng, là lẽ sống của Người.
+        </p>
+      </div>
+
+      <!-- Block 3 -->
+      <div class="rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+           style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+             style="background: rgba(212,163,115,0.2); border: 1px solid rgba(212,163,115,0.4);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A373" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <p class="text-beige text-xs font-semibold uppercase tracking-widest mb-2 opacity-60">03</p>
+        <h4 class="font-serif font-bold text-white text-lg mb-3 leading-tight">Lấy dân làm gốc</h4>
+        <p class="text-white/55 text-xs leading-relaxed">
+          Sự nghiệp cách mạng là <em class="text-beige/80">của dân, do dân, vì dân</em>. Nhân dân là chủ nhân đất nước, cán bộ là công bộc của nhân dân, phải luôn gắn bó mật thiết với quần chúng.
+        </p>
+      </div>
+
+      <!-- Block 4 -->
+      <div class="rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+           style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center mb-4"
+             style="background: rgba(30,58,95,0.5); border: 1px solid rgba(30,58,95,0.8);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4A373" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <p class="text-beige text-xs font-semibold uppercase tracking-widest mb-2 opacity-60">04</p>
+        <h4 class="font-serif font-bold text-white text-lg mb-3 leading-tight">Phát triển toàn diện</h4>
+        <p class="text-white/55 text-xs leading-relaxed">
+          "Trồng người" là chiến lược lâu dài, xây dựng con người <em class="text-beige/80">vừa hồng vừa chuyên</em> — vừa có đức, vừa có tài, toàn diện về phẩm chất và năng lực.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4: Quan điểm của Đảng
+═══════════════════════════════════════════ -->
+<section id="section-dang" class="py-20 lg:py-28"
+         style="background: linear-gradient(180deg, #F0F2F5 0%, #F8F9FA 100%);">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <div class="text-center mb-14 fade-up">
+      <p class="section-eyebrow mb-3">Phần 04</p>
+      <h2 class="font-serif font-bold text-3xl sm:text-4xl text-navy mb-4">
+        Quan điểm của Đảng hiện nay
+      </h2>
+      <p class="text-body/60 max-w-xl mx-auto text-sm leading-relaxed">
+        Đảng Cộng sản Việt Nam kế thừa và phát triển sáng tạo quan niệm về con người trong thời kỳ đổi mới và hội nhập quốc tế.
+      </p>
+      <div class="w-16 h-0.5 mx-auto mt-5" style="background: linear-gradient(90deg,#1E3A5F,#8B1E3F);"></div>
+    </div>
+
+    <!-- Accordion -->
+    <div class="space-y-4 fade-up" id="accordion-container">
+
+      <!-- Accordion 1 -->
+      <div class="glass-card rounded-2xl overflow-hidden" data-accordion>
+        <button class="acc-trigger w-full flex items-center justify-between p-6 text-left group" aria-expanded="false">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors duration-300"
+                 style="background: rgba(30,58,95,0.1);" data-icon-bg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-widest text-dred mb-0.5">Luận điểm I</p>
+              <h3 class="font-serif font-bold text-lg text-navy group-hover:text-dred transition-colors duration-200">
+                Con người là trung tâm của đổi mới
+              </h3>
+            </div>
+          </div>
+          <div class="acc-icon w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ml-4"
+               style="background: rgba(139,30,63,0.1);">
+            <svg width="14" height="14" fill="none" stroke="#8B1E3F" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg>
+          </div>
+        </button>
+        <div class="acc-body">
+          <div class="px-6 pb-6 pt-2">
+            <div class="ml-14 border-l-2 pl-6" style="border-color: rgba(30,58,95,0.12);">
+              <p class="text-sm leading-relaxed text-body/70 mb-4">
+                Đại hội Đảng xác định mục tiêu tổng quát của đổi mới là xây dựng đất nước <strong>"Dân giàu, nước mạnh, dân chủ, công bằng, văn minh"</strong>. Con người không phải phương tiện mà là mục tiêu tối thượng và là nguồn lực quan trọng nhất.
+              </p>
+              <div class="grid sm:grid-cols-2 gap-3">
+                <div class="p-3 rounded-xl" style="background: rgba(30,58,95,0.04); border: 1px solid rgba(30,58,95,0.08);">
+                  <p class="text-xs font-semibold text-navy mb-1">Mục tiêu phát triển</p>
+                  <p class="text-xs text-body/60">Nâng cao đời sống vật chất, tinh thần, bảo đảm quyền con người toàn diện</p>
+                </div>
+                <div class="p-3 rounded-xl" style="background: rgba(139,30,63,0.04); border: 1px solid rgba(139,30,63,0.08);">
+                  <p class="text-xs font-semibold text-dred mb-1">Con người trung tâm</p>
+                  <p class="text-xs text-body/60">Vừa là mục tiêu, vừa là động lực của CNH-HĐH và phát triển bền vững</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion 2 -->
+      <div class="glass-card rounded-2xl overflow-hidden" data-accordion>
+        <button class="acc-trigger w-full flex items-center justify-between p-6 text-left group" aria-expanded="false">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                 style="background: rgba(139,30,63,0.1);" data-icon-bg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8B1E3F" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-widest text-dred mb-0.5">Luận điểm II</p>
+              <h3 class="font-serif font-bold text-lg text-navy group-hover:text-dred transition-colors duration-200">
+                Tiêu chuẩn xây dựng con người Việt Nam
+              </h3>
+            </div>
+          </div>
+          <div class="acc-icon w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ml-4"
+               style="background: rgba(139,30,63,0.1);">
+            <svg width="14" height="14" fill="none" stroke="#8B1E3F" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg>
+          </div>
+        </button>
+        <div class="acc-body">
+          <div class="px-6 pb-6 pt-2">
+            <div class="ml-14 border-l-2 pl-6" style="border-color: rgba(139,30,63,0.12);">
+              <p class="text-sm leading-relaxed text-body/70 mb-4">
+                Nghị quyết Trung ương xác định <strong>5 tiêu chuẩn cơ bản</strong> để xây dựng con người Việt Nam thời kỳ mới:
+              </p>
+              <div class="space-y-2.5">
+                <div class="flex items-start gap-3 p-3 rounded-xl" style="background: rgba(139,30,63,0.04);">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:#8B1E3F;">
+                    <span class="text-white text-xs font-bold">1</span>
+                  </div>
+                  <p class="text-sm text-body/70"><strong>Yêu nước, yêu quê hương</strong> — tinh thần dân tộc và lòng tự hào văn hóa</p>
+                </div>
+                <div class="flex items-start gap-3 p-3 rounded-xl" style="background: rgba(139,30,63,0.04);">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:#8B1E3F;">
+                    <span class="text-white text-xs font-bold">2</span>
+                  </div>
+                  <p class="text-sm text-body/70"><strong>Đoàn kết, nghĩa tình</strong> — tinh thần tương thân tương ái, gắn kết cộng đồng</p>
+                </div>
+                <div class="flex items-start gap-3 p-3 rounded-xl" style="background: rgba(139,30,63,0.04);">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:#8B1E3F;">
+                    <span class="text-white text-xs font-bold">3</span>
+                  </div>
+                  <p class="text-sm text-body/70"><strong>Lối sống lành mạnh</strong> — chuẩn mực đạo đức, văn minh và tiến bộ</p>
+                </div>
+                <div class="flex items-start gap-3 p-3 rounded-xl" style="background: rgba(139,30,63,0.04);">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:#8B1E3F;">
+                    <span class="text-white text-xs font-bold">4</span>
+                  </div>
+                  <p class="text-sm text-body/70"><strong>Lao động chăm chỉ</strong> — sáng tạo, có kỷ luật, tay nghề và năng suất cao</p>
+                </div>
+                <div class="flex items-start gap-3 p-3 rounded-xl" style="background: rgba(139,30,63,0.04);">
+                  <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:#8B1E3F;">
+                    <span class="text-white text-xs font-bold">5</span>
+                  </div>
+                  <p class="text-sm text-body/70"><strong>Học tập suốt đời</strong> — tinh thần cầu thị, nâng cao tri thức và kỹ năng</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accordion 3 -->
+      <div class="glass-card rounded-2xl overflow-hidden" data-accordion>
+        <button class="acc-trigger w-full flex items-center justify-between p-6 text-left group" aria-expanded="false">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                 style="background: rgba(212,163,115,0.2);" data-icon-bg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B88A5A" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-widest text-dred mb-0.5">Luận điểm III</p>
+              <h3 class="font-serif font-bold text-lg text-navy group-hover:text-dred transition-colors duration-200">
+                Giải pháp thực hiện trong thực tiễn
+              </h3>
+            </div>
+          </div>
+          <div class="acc-icon w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ml-4"
+               style="background: rgba(139,30,63,0.1);">
+            <svg width="14" height="14" fill="none" stroke="#8B1E3F" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg>
+          </div>
+        </button>
+        <div class="acc-body">
+          <div class="px-6 pb-6 pt-2">
+            <div class="ml-14 border-l-2 pl-6" style="border-color: rgba(212,163,115,0.3);">
+              <p class="text-sm leading-relaxed text-body/70 mb-5">
+                Để hiện thực hóa quan điểm về con người, Đảng đề ra các nhóm giải pháp chiến lược:
+              </p>
+              <div class="grid sm:grid-cols-3 gap-3">
+                <div class="p-4 rounded-xl text-center" style="background: rgba(30,58,95,0.04); border: 1px solid rgba(30,58,95,0.1);">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2" style="background: rgba(30,58,95,0.15);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1E3A5F" stroke-width="2.2"><path d="M12 22V12M2 7l10-5 10 5M2 17l10 5 10-5"/></svg>
+                  </div>
+                  <p class="text-xs font-bold text-navy mb-1">Kết hợp lợi ích</p>
+                  <p class="text-xs text-body/55">Hài hòa lợi ích cá nhân, tập thể và xã hội</p>
+                </div>
+                <div class="p-4 rounded-xl text-center" style="background: rgba(139,30,63,0.04); border: 1px solid rgba(139,30,63,0.1);">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2" style="background: rgba(139,30,63,0.15);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B1E3F" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                  </div>
+                  <p class="text-xs font-bold text-dred mb-1">Đào tạo nhân lực</p>
+                  <p class="text-xs text-body/55">Phát triển nguồn nhân lực chất lượng cao</p>
+                </div>
+                <div class="p-4 rounded-xl text-center" style="background: rgba(212,163,115,0.08); border: 1px solid rgba(212,163,115,0.2);">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center mx-auto mb-2" style="background: rgba(212,163,115,0.2);">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B88A5A" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                  </div>
+                  <p class="text-xs font-bold" style="color:#B88A5A; margin-bottom:0.25rem;">Chống suy thoái</p>
+                  <p class="text-xs text-body/55">Ngăn chặn suy thoái tư tưởng, đạo đức lối sống</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════ -->
+<footer class="py-16" style="background: #152B47;">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <!-- Footer logo -->
+      <div class="flex items-center justify-center gap-2 mb-6">
+        <span class="w-8 h-8 rounded-full flex items-center justify-center"
+              style="background: linear-gradient(135deg, rgba(212,163,115,0.3), rgba(139,30,63,0.3));">
+          <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
+            <circle cx="7" cy="7" r="3" fill="#D4A373" opacity="0.9"/>
+            <circle cx="7" cy="7" r="6" stroke="#D4A373" stroke-width="1" opacity="0.4" fill="none"/>
+          </svg>
+        </span>
+        <span class="font-serif font-bold text-white text-lg">Tư Tưởng Học Thuật</span>
+      </div>
+
+      <!-- Footer quote -->
+      <blockquote class="max-w-2xl mx-auto mb-8">
+        <p class="font-serif italic text-white/70 text-base leading-relaxed">
+          "Không có gì quý hơn độc lập, tự do."
+        </p>
+        <cite class="block mt-2 not-italic font-sans text-xs font-semibold tracking-widest uppercase"
+              style="color:#D4A373; opacity:0.7;">— Hồ Chí Minh</cite>
+      </blockquote>
+
+      <!-- Divider -->
+      <div class="w-24 h-px mx-auto mb-8" style="background: linear-gradient(90deg, transparent, rgba(212,163,115,0.5), transparent);"></div>
+
+      <!-- Nav links -->
+      <div class="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-8">
+        <a href="#section-canhan-xahoi" class="text-white/40 text-xs hover:text-beige transition-colors duration-200">Cá nhân &amp; Xã hội</a>
+        <a href="#section-quanchung"   class="text-white/40 text-xs hover:text-beige transition-colors duration-200">Quần chúng Nhân dân</a>
+        <a href="#section-hcm"         class="text-white/40 text-xs hover:text-beige transition-colors duration-200">Tư tưởng Hồ Chí Minh</a>
+        <a href="#section-dang"        class="text-white/40 text-xs hover:text-beige transition-colors duration-200">Quan điểm Đảng</a>
+      </div>
+
+      <!-- Copyright -->
+      <p class="text-white/25 text-xs leading-relaxed">
+        &copy; 2025 · Triết học Mác – Lênin & Tư tưởng Hồ Chí Minh · Tài liệu học thuật
+      </p>
+      <p class="text-white/15 text-xs mt-1">Môn học: MLN111 · Phục vụ mục đích học tập &amp; nghiên cứu</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════ -->
+<script>
+  /* ─── Progress Bar ─────────────────────────────── */
+  const progressBar = document.getElementById('progress-bar');
+  function updateProgressBar() {
+    const scrollTop    = window.scrollY;
+    const docHeight    = document.documentElement.scrollHeight - window.innerHeight;
+    const progress     = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    progressBar.style.width = progress + '%';
+  }
+  window.addEventListener('scroll', updateProgressBar, { passive: true });
+
+  /* ─── Mobile Hamburger ─────────────────────────── */
+  const hamburgerBtn  = document.getElementById('hamburger-btn');
+  const mobileMenu    = document.getElementById('mobile-menu');
+  let menuOpen        = false;
+
+  hamburgerBtn.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    hamburgerBtn.setAttribute('aria-expanded', menuOpen.toString());
+  });
+
+  // Close menu on mobile link click
+  document.querySelectorAll('.mobile-nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      menuOpen = false;
+      mobileMenu.classList.remove('open');
+    });
+  });
+
+  /* ─── Accordion ────────────────────────────────── */
+  const accordionItems = document.querySelectorAll('[data-accordion]');
+
+  accordionItems.forEach(item => {
+    const trigger  = item.querySelector('.acc-trigger');
+    const body     = item.querySelector('.acc-body');
+    const icon     = item.querySelector('.acc-icon');
+    const iconBg   = item.querySelector('[data-icon-bg]');
+
+    trigger.addEventListener('click', () => {
+      const isOpen = body.classList.contains('open');
+
+      // Close all others
+      accordionItems.forEach(other => {
+        if (other !== item) {
+          other.querySelector('.acc-body').classList.remove('open');
+          other.querySelector('.acc-icon').classList.remove('open');
+          other.querySelector('.acc-trigger').setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // Toggle current
+      body.classList.toggle('open', !isOpen);
+      icon.classList.toggle('open', !isOpen);
+      trigger.setAttribute('aria-expanded', (!isOpen).toString());
+
+      if (!isOpen) {
+        item.style.borderColor = 'rgba(139,30,63,0.25)';
+      } else {
+        item.style.borderColor = '';
+      }
+    });
+  });
+
+  /* ─── Fade-up on scroll (IntersectionObserver) ── */
+  const fadeUpEls = document.querySelectorAll('.fade-up');
+  const observer  = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  fadeUpEls.forEach(el => observer.observe(el));
+
+  /* ─── Smooth scroll for all in-page links ──────── */
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', (e) => {
+      const target = document.querySelector(anchor.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  /* ─── Navbar active link highlight ─────────────── */
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  function highlightNav() {
+    let current = '';
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100;
+      if (window.scrollY >= sectionTop) {
+        current = section.getAttribute('id');
+      }
+    });
+    navLinks.forEach(link => {
+      link.style.color     = '';
+      link.style.fontWeight = '';
+      link.style.background = '';
+      const href = link.getAttribute('href').replace('#', '');
+      if (href === current) {
+        link.style.color      = '#1E3A5F';
+        link.style.fontWeight = '600';
+        link.style.background = 'rgba(30,58,95,0.08)';
+      }
+    });
+  }
+
+  window.addEventListener('scroll', highlightNav, { passive: true });
+  highlightNav();
+
+  /* ─── Trigger initial visible for above-fold ───── */
+  window.addEventListener('load', () => {
+    fadeUpEls.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.9) {
+        el.classList.add('visible');
+        observer.unobserve(el);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
