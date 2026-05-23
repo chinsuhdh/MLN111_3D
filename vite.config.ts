@@ -5,8 +5,6 @@ import { defineConfig } from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: '/MLN111/', 
-
     plugins: [react(), tailwindcss()],
 
     resolve: {
