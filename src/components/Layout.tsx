@@ -1,100 +1,110 @@
-import { ReactNode, useState, useEffect } from 'react';
-import { motion, useScroll, useSpring } from 'motion/react';
+'use client';
 
-function ScrollProgress() {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+import { ReactNode, useState, useRef, useEffect, useCallback } from 'react';
+import {
+  PhilosophyScrollContext,
+  PhilosophyScrollState,
+  TOTAL_PAGES,
+  SECTION_PEAKS,
+  getSectionIndex,
+  getFocusedPlanet,
+} from '../hooks/usePhilosophyScroll';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SCROLL PROGRESS BAR
+// ─────────────────────────────────────────────────────────────────────────────
+function ScrollProgressBar({ progress }: { progress: number }) {
   return (
-    <motion.div
-      className="fixed top-0 left-0 h-[5px] z-[9999] origin-left w-full"
-      style={{ scaleX, background: 'linear-gradient(90deg, #1E3A5F, #8B1E3F, #D4A373)' }}
-    />
+    <div className="fixed top-0 left-0 right-0 h-[2px] z-[9999]" style={{ background: 'rgba(255,255,255,0.04)' }}>
+      <div
+        className="h-full origin-left transition-none"
+        style={{
+          transform: `scaleX(${progress})`,
+          background: 'linear-gradient(90deg, rgba(100,255,218,0.6), rgba(253,224,71,0.5), rgba(251,146,60,0.7))',
+        }}
+      />
+    </div>
   );
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// NAVBAR — 6 sections
+// ─────────────────────────────────────────────────────────────────────────────
 const NAV_LINKS = [
-  { href: '#section-canhan-xahoi', label: 'Cá nhân & Xã hội' },
-  { href: '#section-quanchung',    label: 'Quần chúng'        },
-  { href: '#section-casestudy',    label: 'Tình huống'       },
-  { href: '#section-mindmap',      label: 'Sơ đồ tư duy'     },
-  { href: '#section-references',   label: 'Tài liệu'         },
+  { sectionIdx: 0, label: 'Giới thiệu' },
+  { sectionIdx: 1, label: 'Cá nhân & Xã hội' },
+  { sectionIdx: 2, label: 'Quần chúng & Lãnh tụ' },
+  { sectionIdx: 3, label: 'Tình huống' },
+  { sectionIdx: 4, label: 'Tổng quan' },
+  { sectionIdx: 5, label: 'Tài liệu' },
 ];
 
-function Navbar() {
+function Navbar({
+  activeSection,
+  onFlyTo,
+}: {
+  activeSection: number;
+  onFlyTo: (idx: number) => void;
+}) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState('');
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => {
-      setScrolled(window.scrollY > 20);
-      const sections = document.querySelectorAll('section[id]');
-      let current = '';
-      sections.forEach((section) => {
-        const top = (section as HTMLElement).offsetTop - 130;
-        if (window.scrollY >= top) current = section.getAttribute('id') || '';
-      });
-      setActiveSection(current);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const linkClass = (href: string) => {
-    const isActive = activeSection === href.replace('#', '');
-    return `px-4 py-2.5 2xl:px-6 2xl:py-3.5 rounded-xl text-base 2xl:text-xl font-medium transition-all duration-200 ${
-      isActive ? 'text-navy font-semibold bg-navy/8' : 'text-body hover:text-navy hover:bg-navy/6'
-    }`;
-  };
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'backdrop-blur-[14px] bg-bg/93 border-b border-navy/10 shadow-sm'
-          : 'backdrop-blur-[8px] bg-bg/75'
-      }`}
-    >
-      <div className="w-full max-w-none px-6 md:px-16 2xl:px-28">
-        <div className="flex items-center justify-between h-20 lg:h-24 2xl:h-28">
+    <nav className="relative z-50 w-full pointer-events-auto">
+      <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+        {/* Logo */}
+        <button
+          onClick={() => onFlyTo(0)}
+          className="flex-shrink-0 transition-opacity duration-200 hover:opacity-75"
+          style={{ fontFamily: 'var(--font-display)' }}
+        >
+          <span className="text-2xl tracking-tight text-white">
+            Con Người<sup className="text-xs ml-0.5 opacity-60">®</sup>
+          </span>
+          <span className="block text-[10px] tracking-[0.22em] uppercase text-white/30 font-sans mt-0.5">
+            Triết học Mác – Lênin
+          </span>
+        </button>
 
-          {/* Logo */}
-          <a href="#hero" className="flex items-center gap-3 2xl:gap-5 group flex-shrink-0">
-            <span className="w-10 h-10 2xl:w-14 2xl:h-14 rounded-full flex items-center justify-center bg-gradient-to-br from-navy to-dred shadow-lg flex-shrink-0">
-              <svg width="18" height="18" viewBox="0 0 14 14" fill="none">
-                <circle cx="7" cy="7" r="3" fill="white" opacity="0.95" />
-                <circle cx="7" cy="7" r="6" stroke="white" strokeWidth="1" opacity="0.4" fill="none" />
-              </svg>
-            </span>
-            <div>
-              <p className="font-serif font-bold text-navy text-xl 2xl:text-3xl leading-tight group-hover:text-dred transition-colors duration-200">
-                Tư Tưởng
-              </p>
-              <p className="font-sans font-medium text-body/50 text-sm 2xl:text-lg">
-                Học Thuật · Mác–Lênin
-              </p>
-            </div>
-          </a>
-
-          {/* Desktop nav */}
-          <ul className="hidden lg:flex items-center gap-1 2xl:gap-2">
-            {NAV_LINKS.map(({ href, label }) => (
-              <li key={href}>
-                <a href={href} className={linkClass(href)}>{label}</a>
+        {/* Desktop nav */}
+        <ul className="hidden md:flex items-center gap-0.5 bg-black/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/5">
+          {NAV_LINKS.map(({ sectionIdx, label }) => {
+            const isActive = activeSection === sectionIdx;
+            return (
+              <li key={sectionIdx}>
+                <button
+                  onClick={() => onFlyTo(sectionIdx)}
+                  className={`nav-link px-3 py-1.5 rounded-full transition-all duration-200 text-xs ${
+                    isActive ? 'bg-white/10 text-white' : 'text-white/45 hover:text-white/75'
+                  }`}
+                >
+                  {label}
+                </button>
               </li>
-            ))}
-          </ul>
+            );
+          })}
+        </ul>
 
-          {/* Hamburger */}
+        {/* CTA + mobile hamburger */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => onFlyTo(1)}
+            className="liquid-glass hidden sm:inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm text-white transition-all duration-200 hover:scale-[1.03] active:scale-[0.98]"
+          >
+            Khám phá
+            <svg width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
+
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Mở menu"
-            className="lg:hidden p-3 rounded-xl hover:bg-navy/8 transition-colors"
+            className="md:hidden p-2 rounded-lg hover:bg-white/6 transition-colors"
           >
-            <svg width="28" height="28" fill="none" stroke="#1E3A5F" strokeWidth="2.5" strokeLinecap="round">
-              <line x1="3" y1="7"  x2="25" y2="7"  />
-              <line x1="3" y1="14" x2="25" y2="14" />
-              <line x1="3" y1="21" x2="25" y2="21" />
+            <svg width="22" height="22" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="1.8" strokeLinecap="round">
+              <line x1="3" y1="6"  x2="19" y2="6"  />
+              <line x1="3" y1="12" x2="19" y2="12" />
+              <line x1="3" y1="18" x2="19" y2="18" />
             </svg>
           </button>
         </div>
@@ -102,20 +112,20 @@ function Navbar() {
 
       {/* Mobile drawer */}
       <div
-        className={`lg:hidden border-t border-navy/10 overflow-hidden transition-all duration-500 ${
-          menuOpen ? 'max-h-[500px]' : 'max-h-0'
-        }`}
+        className={`md:hidden overflow-hidden transition-all duration-400 ${menuOpen ? 'max-h-80' : 'max-h-0'}`}
+        style={{ borderTop: menuOpen ? '1px solid rgba(255,255,255,0.06)' : 'none' }}
       >
-        <div className="px-6 py-4 flex flex-col gap-2 bg-white/96 backdrop-blur-xl">
-          {NAV_LINKS.map(({ href, label }) => (
-            <a
-              key={href}
-              href={href}
-              onClick={() => setMenuOpen(false)}
-              className="block px-5 py-4 rounded-xl text-xl font-medium text-body hover:text-navy hover:bg-navy/6 transition-colors"
+        <div className="px-6 py-3 flex flex-col gap-1" style={{ background: 'rgba(3,10,20,0.97)' }}>
+          {NAV_LINKS.map(({ sectionIdx, label }) => (
+            <button
+              key={sectionIdx}
+              onClick={() => { onFlyTo(sectionIdx); setMenuOpen(false); }}
+              className={`text-left px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                activeSection === sectionIdx ? 'text-white bg-white/6' : 'text-white/45 hover:text-white/75'
+              }`}
             >
               {label}
-            </a>
+            </button>
           ))}
         </div>
       </div>
@@ -123,67 +133,76 @@ function Navbar() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="py-20 2xl:py-32 bg-navy-dark">
-      <div className="w-full max-w-none px-6 md:px-16 2xl:px-28 text-center">
-        <div className="flex items-center justify-center gap-4 mb-8 2xl:mb-12">
-          <span
-            className="w-12 h-12 2xl:w-16 2xl:h-16 rounded-full flex items-center justify-center flex-shrink-0"
-            style={{ background: 'linear-gradient(135deg, rgba(212,163,115,0.3), rgba(139,30,63,0.3))' }}
-          >
-            <svg width="22" height="22" viewBox="0 0 14 14" fill="none">
-              <circle cx="7" cy="7" r="3" fill="#D4A373" opacity="0.9" />
-              <circle cx="7" cy="7" r="6" stroke="#D4A373" strokeWidth="1" opacity="0.4" fill="none" />
-            </svg>
-          </span>
-          <span className="font-serif font-bold text-white text-3xl 2xl:text-5xl">Tư Tưởng Học Thuật</span>
-        </div>
-
-        <blockquote className="max-w-4xl mx-auto mb-12 2xl:mb-16">
-          <p className="font-serif italic text-white/70 text-2xl 2xl:text-4xl leading-relaxed">
-            "Sự phát triển tự do của mỗi người là điều kiện cho sự phát triển tự do của tất cả mọi người."
-          </p>
-          <cite className="block mt-4 not-italic font-sans text-sm 2xl:text-lg font-bold tracking-widest uppercase text-beige opacity-70">
-            — C.Mác & Ph.Ăng-ghen
-          </cite>
-        </blockquote>
-
-        <div
-          className="w-28 h-px mx-auto mb-12"
-          style={{ background: 'linear-gradient(90deg, transparent, rgba(212,163,115,0.5), transparent)' }}
-        />
-
-        <div className="flex flex-wrap justify-center gap-x-10 gap-y-4 mb-12">
-          {NAV_LINKS.map(({ href, label }) => (
-            <a
-              key={href}
-              href={href}
-              className="text-white/40 text-base 2xl:text-xl hover:text-beige transition-colors duration-200"
-            >
-              {label}
-            </a>
-          ))}
-        </div>
-
-        <p className="text-white/25 text-sm 2xl:text-base leading-relaxed">
-          &copy; 2026 · Triết học Mác – Lênin · Cống hiến cho sự nghiệp nghiên cứu học thuật
-        </p>
-        <p className="text-white/15 text-xs 2xl:text-sm mt-2">Đồ án môn học · Thư viện số &amp; Tài liệu tham khảo</p>
-      </div>
-    </footer>
-  );
-}
-
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN LAYOUT
+// ─────────────────────────────────────────────────────────────────────────────
 export default function Layout({ children }: { children: ReactNode }) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [activeSection,  setActiveSection]  = useState(0);
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const handleScroll = () => {
+      const max      = el.scrollHeight - el.clientHeight;
+      const progress = max > 0 ? el.scrollTop / max : 0;
+      setScrollProgress(progress);
+      setActiveSection(getSectionIndex(progress));
+    };
+    handleScroll();
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const flyTo = useCallback((sectionIdx: number) => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const max = el.scrollHeight - el.clientHeight;
+    const peaks = [...SECTION_PEAKS];
+    el.scrollTo({ top: peaks[Math.min(sectionIdx, peaks.length - 1)] * max, behavior: 'smooth' });
+  }, []);
+
+  const focusedPlanet = getFocusedPlanet(activeSection);
+
+  const scrollState: PhilosophyScrollState = {
+    scrollProgress,
+    activeSection,
+    focusedPlanet,
+    flyTo,
+    scrollContainerRef,
+  };
+
   return (
-    <div className="min-h-screen bg-bg flex flex-col font-sans antialiased text-body">
-      <ScrollProgress />
-      <Navbar />
-      <main className="flex-1 pt-20 lg:pt-24 2xl:pt-28">
-        {children}
-      </main>
-      <Footer />
-    </div>
+    <PhilosophyScrollContext.Provider value={scrollState}>
+      <div className="fixed inset-0 w-full h-full overflow-hidden bg-[#030A14]">
+
+        {/* SCROLL DRIVER */}
+        <div
+          ref={scrollContainerRef}
+          className="absolute inset-0 z-50 overflow-y-auto overflow-x-hidden"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {/* STICKY CONTENT LAYER */}
+          <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
+            <div className="relative w-full h-full flex flex-col">
+              <Navbar activeSection={activeSection} onFlyTo={flyTo} />
+              <div className="flex-1 relative">
+                {children}
+              </div>
+            </div>
+          </div>
+
+          {/* SCROLL SPACE: (TOTAL_PAGES - 1) × 100vh of phantom height */}
+          <div
+            style={{ height: `calc(${TOTAL_PAGES * 100}vh - 100vh)` }}
+            className="w-full pointer-events-none"
+          />
+        </div>
+
+        {/* Progress bar */}
+        <ScrollProgressBar progress={scrollProgress} />
+      </div>
+    </PhilosophyScrollContext.Provider>
   );
 }

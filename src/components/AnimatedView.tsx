@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 
 type Direction = 'up' | 'down' | 'left' | 'right';
@@ -20,18 +20,22 @@ const getInitial = (direction: Direction, distance: number) => {
   }
 };
 
+/**
+ * AnimatedView — simple fade-in animation wrapper.
+ * In the new fixed layout, whileInView doesn't work reliably,
+ * so we use animate directly with a slight delay.
+ */
 export default function AnimatedView({
   children,
   delay = 0,
   className = '',
   direction = 'up',
-  distance = 32,
+  distance = 24,
 }: AnimatedViewProps) {
   return (
     <motion.div
       initial={getInitial(direction, distance)}
-      whileInView={{ opacity: 1, y: 0, x: 0 }}
-      viewport={{ once: true, margin: '-60px' }}
+      animate={{ opacity: 1, y: 0, x: 0 }}
       transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >

@@ -1,338 +1,202 @@
-'use client'; 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
-import AnimatedView from './AnimatedView';
+import { useState, useEffect, useContext } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Tooltip from './Tooltip';
+import { PhilosophyScrollContext, SECTION_BOUNDS, SECTION_PEAKS } from '../hooks/usePhilosophyScroll';
 
-type QuoteData = {
-  text: string;
-  author: string;
-};
+type QuoteData = { text: string; author: string };
 
-type NodeData = {
-  title: string;
-  desc: string;
-  quote: string;
-  cite: string;
-  orbit: 'inner' | 'middle' | 'outer';
-  relations?: string[];
-};
-
-const QUOTE_DATABASE: Record<string, QuoteData> = {
-  core: { text: "Trong tính hiện thực của nó, bản chất con người là tổng hòa những quan hệ xã hội.", author: "Karl Marx" },
-  ca_nhan: { text: "Mỗi cá nhân là một thực thể xã hội mang tính cá nhân.", author: "Giáo trình Triết học" },
-  xa_hoi: { text: "Tồn tại xã hội quyết định ý thức xã hội.", author: "C.Mác & Ph.Ăng-ghen" },
-  nhan_dan: { text: "Quần chúng nhân dân là chủ thể sáng tạo chân chính của lịch sử.", author: "V.I.Lênin" },
-  giai_cap: { text: "Lịch sử tất cả các xã hội tồn tại từ trước đến nay chỉ là lịch sử đấu tranh giai cấp.", author: "C.Mác & Ph.Ăng-ghen" },
-  lich_su: { text: "Con người làm ra lịch sử của chính mình, nhưng không phải làm theo ý muốn tùy tiện.", author: "Karl Marx" },
-  hanh_phuc: { text: "Hạnh phúc là đấu tranh.", author: "Karl Marx" },
-  lanh_tu: { text: "Lãnh tụ là những người kiệt xuất, do phong trào quần chúng tạo ra và gắn bó mật thiết với quần chúng.", author: "Giáo trình Triết học" },
-  tap_the: { text: "Sự phát triển tự do của mỗi người là điều kiện cho sự phát triển tự do của tất cả mọi người.", author: "C.Mác & Ph.Ăng-ghen" },
-};
-
-const IDLE_KEYS = ['core', 'lanh_tu', 'nhan_dan', 'tap_the', 'giai_cap'];
+const QUOTE_DATABASE: QuoteData[] = [
+  { text: 'Tồn tại xã hội quyết định ý thức xã hội.', author: 'C.Mác & Ph.Ăng-ghen' },
+  { text: 'Trong tính hiện thực của nó, bản chất con người là tổng hòa những quan hệ xã hội.', author: 'Karl Marx' },
+  { text: 'Mỗi cá nhân là một thực thể xã hội mang tính cá nhân.', author: 'Giáo trình Triết học' },
+  { text: 'Quần chúng nhân dân là chủ thể sáng tạo chân chính của lịch sử.', author: 'V.I.Lênin' },
+  { text: 'Lịch sử tất cả các xã hội chỉ là lịch sử đấu tranh giai cấp.', author: 'C.Mác & Ph.Ăng-ghen' },
+  { text: 'Con người làm ra lịch sử của chính mình, nhưng không phải làm theo ý muốn tùy tiện.', author: 'Karl Marx' },
+  { text: 'Hạnh phúc là đấu tranh.', author: 'Karl Marx' },
+  { text: 'Lãnh tụ là những người kiệt xuất, do phong trào quần chúng tạo ra.', author: 'Giáo trình Triết học' },
+  { text: 'Sự phát triển tự do của mỗi người là điều kiện cho sự phát triển tự do của tất cả mọi người.', author: 'C.Mác & Ph.Ăng-ghen' },
+];
 
 const TypewriterText = ({ text }: { text: string }) => {
-  const [displayedText, setDisplayedText] = useState('');
-
+  const [display, setDisplay] = useState('');
   useEffect(() => {
-    setDisplayedText(''); 
+    setDisplay('');
     let i = 0;
-    
-    const segmenter = new Intl.Segmenter('vi', { granularity: 'grapheme' });
-    const segments = Array.from(segmenter.segment(text)).map(s => s.segment);
-
-    const typingInterval = setInterval(() => {
-      if (i <= segments.length) {
-        setDisplayedText(segments.slice(0, i).join(''));
-        i++;
-      } else {
-        clearInterval(typingInterval);
-      }
-    }, 35);
-
-    return () => clearInterval(typingInterval);
+    const seg = new Intl.Segmenter('vi', { granularity: 'grapheme' });
+    const chars = Array.from(seg.segment(text)).map(s => s.segment);
+    const id = setInterval(() => {
+      if (i <= chars.length) { setDisplay(chars.slice(0, i).join('')); i++; }
+      else clearInterval(id);
+    }, 32);
+    return () => clearInterval(id);
   }, [text]);
-
   return (
     <span>
-      {displayedText}
+      {display}
       <motion.span
         animate={{ opacity: [1, 0, 1] }}
-        transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
-        className="inline-block w-0.75 h-[0.9em] bg-dred ml-1 align-middle opacity-70"
+        transition={{ repeat: Infinity, duration: 0.8, ease: 'linear' }}
+        className="inline-block w-0.5 h-[0.9em] bg-[#64FFDA] ml-1 align-middle opacity-60"
       />
     </span>
   );
 };
 
-const philosophicalContent: Record<string, NodeData> = {
-  core: { title: 'CON NGƯỜI', desc: 'Bản chất con người là tổng hòa các quan hệ xã hội. Con người vừa là chủ thể sáng tạo, vừa là sản phẩm của lịch sử.', quote: '"Trong tính hiện thực của nó..."', cite: '— Karl Marx', orbit: 'inner' },
-  ca_nhan: { title: 'CÁ NHÂN', desc: 'Cá nhân không tồn tại biệt lập mà luôn gắn liền với xã hội. Quan hệ cá nhân - xã hội là tiền đề tồn tại của cả hai.', quote: '"Mỗi cá nhân là một thực thể..."', cite: '— Giáo trình Triết học', orbit: 'inner', relations: ['core', 'xa_hoi'] },
-  xa_hoi: { title: 'XÃ HỘI', desc: 'Môi trường tồn tại của con người. Trong xã hội có giai cấp, sự thống nhất và mâu thuẫn giữa cá nhân và xã hội mang tính lịch sử.', quote: '"Tồn tại xã hội quyết định..."', cite: '— C.Mác & Ph.Ăng-ghen', orbit: 'middle', relations: ['core', 'ca_nhan', 'nhan_dan', 'giai_cap'] },
-  nhan_dan: { title: 'NHÂN DÂN', desc: 'Lực lượng cơ bản sản xuất ra mọi của cải vật chất và tinh thần, là động lực cơ bản của mọi cuộc cách mạng xã hội.', quote: '"Quần chúng nhân dân là chủ thể..."', cite: '— V.I.Lênin', orbit: 'outer', relations: ['core', 'xa_hoi', 'lich_su'] },
-  giai_cap: { title: 'GIAI CẤP', desc: 'Trong xã hội có đối kháng, tính giai cấp quyết định địa vị, lợi ích và hệ tư tưởng của mỗi con người cụ thể.', quote: '"Lịch sử tất cả các xã hội..."', cite: '— Tuyên ngôn của Đảng Cộng sản', orbit: 'outer', relations: ['xa_hoi', 'lich_su'] },
-  lich_su: { title: 'LỊCH SỬ', desc: 'Sự vận động tất yếu khách quan. Con người tạo ra lịch sử nhưng dưới những điều kiện kế thừa từ quá khứ.', quote: '"Con người làm ra lịch sử..."', cite: '— Karl Marx', orbit: 'outer', relations: ['nhan_dan', 'giai_cap', 'core'] },
-  hanh_phuc: { title: 'HẠNH PHÚC', desc: 'Mục tiêu tối thượng của triết học Mác là giải phóng con người, mang lại tự do và hạnh phúc toàn diện.', quote: '"Hạnh phúc là đấu tranh."', cite: '— Karl Marx', orbit: 'inner', relations: ['core'] }
-};
-
 export default function Hero() {
-  const [activeNode, setActiveNode] = useState<string | null>(null); 
-  const [hoveredNode, setHoveredNode] = useState<string | null>(null); 
+  const { scrollContainerRef, scrollProgress } = useContext(PhilosophyScrollContext);
   const [idleIndex, setIdleIndex] = useState(0);
 
+  const s = SECTION_BOUNDS[0];
+  const opIn  = scrollProgress < s.peak
+    ? Math.min(1, (scrollProgress - s.start) / Math.max(s.peak - s.start, 0.001))
+    : 1;
+  const opOut = scrollProgress > s.exit
+    ? Math.max(0, 1 - (scrollProgress - s.exit) / Math.max(s.end - s.exit, 0.001))
+    : 1;
+  const opacity = Math.min(opIn, opOut);
+  const scale   = 0.9 + 0.1 * Math.min(1, opIn);
+
   useEffect(() => {
-    if (hoveredNode !== null || activeNode !== null) return; 
-    const interval = setInterval(() => {
-      setIdleIndex((prev) => (prev + 1) % IDLE_KEYS.length);
-    }, 8000);
-    return () => clearInterval(interval);
-  }, [hoveredNode, activeNode]);
+    const id = setInterval(() => setIdleIndex(p => (p + 1) % QUOTE_DATABASE.length), 8000);
+    return () => clearInterval(id);
+  }, []);
 
-  const currentQuoteKey = hoveredNode || activeNode || IDLE_KEYS[idleIndex];
-  const currentQuote = QUOTE_DATABASE[currentQuoteKey] || QUOTE_DATABASE['core'];
-  const nodeData = activeNode ? philosophicalContent[activeNode] : null;
-  
-  const isDimmed = (nodeId: string) => {
-    if (!activeNode) return false;
-    if (activeNode === nodeId) return false;
-    if (philosophicalContent[activeNode]?.relations?.includes(nodeId)) return false;
-    return true;
-  };
+  const currentQuote = QUOTE_DATABASE[idleIndex];
 
-  const getNodeFill = (nodeId: string, defaultFill: string) => {
-    if (activeNode === nodeId) return defaultFill; 
-    if (hoveredNode === nodeId) return defaultFill;
-    if (hoveredNode && philosophicalContent[hoveredNode]?.relations?.includes(nodeId)) return defaultFill;
-    return "#526175"; 
-  };
-
-  const floatingQuoteVariants: Variants = { 
-    animate: { y: [-2, 2, -2], opacity: [0.35, 0.6, 0.35], transition: { duration: 8, repeat: Infinity, ease: "easeInOut" } } 
-  };
-  
-  const lineDrawVariants: Variants = { 
-    hidden: { pathLength: 0, opacity: 0 }, 
-    visible: (custom: number) => ({ 
-      pathLength: 1, 
-      opacity: 0.4, 
-      transition: { pathLength: { delay: custom * 0.1 + 0.3, duration: 1.5, ease: "easeOut" }, opacity: { delay: custom * 0.1 + 0.3, duration: 0.5 } } 
-    }) 
-  };
-  
-  const nodeVariants: Variants = {
-    initial: { scale: 1, y: 0 },
-    hover: { scale: 1.03, y: -4, transition: { type: "spring", stiffness: 400, damping: 25 } },
-    active: { scale: 1.05, y: -8, filter: "url(#active-softer-glow)", transition: { type: "spring", stiffness: 300, damping: 20 } },
-    dimmed: { scale: 0.95, opacity: 0.15, transition: { duration: 0.5 } },
-    normal: { scale: 1, opacity: 1, y: 0, filter: "none", transition: { duration: 0.5 } }
-  };
+  if (opacity < 0.01) return null;
 
   return (
-    <section id="hero" className="min-h-screen flex items-center py-16 2xl:py-24 overflow-hidden relative bg-[#FAF9F6]">
-      <div className="absolute inset-0 opacity-[0.015] pointer-events-none bg-[url('/textures/noise.png')]" />
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_center,transparent_0%,rgba(250,249,246,0.5)_100%)]" />
-
-      <div className="w-full max-w-none px-6 md:px-16 2xl:px-28 z-10 relative">
-        <div className="grid lg:grid-cols-2 gap-12 md:gap-16 2xl:gap-28 items-center">
-
-          <AnimatedView>
-            <p className="section-eyebrow text-base md:text-lg 2xl:text-xl mb-6 md:mb-8">
+    <div
+      className="hud-panel fixed inset-0 w-full h-full z-10"
+      style={{
+        opacity,
+        transform: `scale(${scale})`,
+        transition: 'opacity 0.06s linear, transform 0.06s linear',
+        pointerEvents: opacity > 0.25 ? 'auto' : 'none',
+      }}
+    >
+      <div className="w-full h-full grid lg:grid-cols-2">
+        <div className="w-full h-full flex flex-col justify-center px-8 md:px-16 lg:pr-24 bg-gradient-to-r from-[#030A14] via-[#030A14]/95 to-transparent backdrop-blur-3xl pointer-events-auto">
+          <div className="max-w-xl w-full mx-auto lg:mx-0 py-12">
+            
+            <p className="section-eyebrow mb-6 animate-fade-rise">
               Chủ nghĩa duy vật lịch sử · Triết học Mác – Lênin
             </p>
 
-            <h1 className="font-serif font-bold leading-[1.05] mb-8 md:mb-10 2xl:mb-14 text-navy text-5xl md:text-6xl 2xl:text-8xl">
-              CON NGƯỜI
-              <br />
-              <span className="hero-title-accent">TRONG TRIẾT HỌC</span>
-              <br />
-              <span className="text-navy">MÁC – LÊNIN</span>
+            <h1
+              className="animate-fade-rise font-normal leading-[0.95] tracking-[-0.04em] mb-8"
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontSize:   'clamp(2.8rem, 5.5vw, 5.8rem)',
+                color:      'rgba(255,255,255,0.95)',
+              }}
+            >
+              Nơi{' '}
+              <em className="not-italic" style={{ color: 'rgba(255,255,255,0.42)' }}>
+                con người
+              </em>
+              {' '}vươn lên qua{' '}
+              <em className="not-italic" style={{ color: 'rgba(255,255,255,0.42)' }}>
+                lịch sử.
+              </em>
             </h1>
 
-            <div className="leading-relaxed text-body/70 mb-10 md:mb-12 2xl:mb-16 text-xl md:text-2xl 2xl:text-3xl max-w-4xl">
+            <p
+              className="animate-fade-rise-delay leading-relaxed max-w-lg text-white/65"
+              style={{
+                fontSize:   'clamp(0.95rem, 1.5vw, 1.125rem)',
+                fontFamily: 'var(--font-body)',
+              }}
+            >
               Nghiên cứu quan điểm về{' '}
-              <Tooltip term="Bản thể luận" definition="Ngành triết học nghiên cứu bản chất của tồn tại. Trong triết học Mác, bản thể luận duy vật khẳng định vật chất là nền tảng của mọi thực tại, con người được quy định bởi tồn tại xã hội.">
+              <Tooltip term="Bản thể luận" definition="Ngành triết học nghiên cứu bản chất của tồn tại. Trong triết học Mác, bản thể luận duy vật khẳng định vật chất là nền tảng của mọi thực tại.">
                 bản chất xã hội
-              </Tooltip>
-              {' '}của con người, mối quan hệ biện chứng{' '}
+              </Tooltip>{' '}
+              của con người, mối quan hệ biện chứng{' '}
               <Tooltip term="Cá nhân & Xã hội" definition="Sự thống nhất biện chứng: Xã hội giữ vai trò quyết định, cung cấp điều kiện để cá nhân phát triển; ngược lại, năng lực cá nhân góp phần thúc đẩy xã hội tiến bộ.">
                 cá nhân – tập thể
               </Tooltip>
-              , cùng vai trò quyết định của quần chúng nhân dân và sự dẫn dắt của{' '}
-              <Tooltip term="Lãnh tụ" definition="Những cá nhân kiệt xuất xuất hiện từ phong trào quần chúng, có tầm nhìn vượt trội, nắm bắt được quy luật khách quan để định hướng và dẫn dắt tập thể.">
+              , cùng vai trò của KHÁM PHÁ{' '}
+              <Tooltip term="Lãnh tụ" definition="Những cá nhân kiệt xuất xuất hiện từ phong trào quần chúng, có tầm nhìn vượt trội, nắm bắt được quy luật khách quan.">
                 lãnh tụ
               </Tooltip>{' '}
               trong tiến trình lịch sử.
-            </div>
+            </p>
 
-            <div className="relative pl-6 2xl:pl-8 mb-12 2xl:mb-16 border-l-4 border-beige/60 min-h-40 flex flex-col justify-center">
-              <span className="absolute -top-6 -left-3 text-[120px] leading-none font-serif text-navy/5 pointer-events-none select-none">
-                ❝
-              </span>
-
+            <div
+              className="animate-fade-rise-delay relative pl-5 my-8 min-h-24 flex flex-col justify-center"
+              style={{ borderLeft: '1px solid rgba(212,163,115,0.3)' }}
+            >
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={currentQuote.text} 
-                  initial={{ opacity: 0, filter: "blur(4px)", x: -10 }}
-                  animate={{ opacity: 1, filter: "blur(0px)", x: 0 }}
-                  exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.3 } }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="relative z-10"
+                  key={currentQuote.text}
+                  initial={{ opacity: 0, x: -8, filter: 'blur(4px)' }}
+                  animate={{ opacity: 1, x: 0,  filter: 'blur(0px)' }}
+                  exit={{   opacity: 0,           filter: 'blur(4px)', transition: { duration: 0.2 } }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
                 >
-                  <p className="font-serif italic text-body/80 leading-relaxed text-xl md:text-2xl 2xl:text-3xl min-h-20">
+                  <p
+                    className="italic leading-relaxed"
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize:   'clamp(0.9rem, 1.3vw, 1.05rem)',
+                      color:      'rgba(255,255,255,0.65)',
+                    }}
+                  >
                     <TypewriterText text={currentQuote.text} />
                   </p>
-                  
-                  <div className="mt-5 flex items-center gap-4 flex-wrap">
-                    <cite className="not-italic font-sans font-bold text-dred tracking-wider uppercase text-sm md:text-base">
-                      — {currentQuote.author}
-                    </cite>
-                  </div>
+                  <cite
+                    className="mt-2 flex items-center gap-2 not-italic font-semibold tracking-wider uppercase"
+                    style={{ color: '#D4A373', fontSize: '0.68rem', fontFamily: 'var(--font-body)' }}
+                  >
+                    — {currentQuote.author}
+                  </cite>
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 md:gap-6 mb-14 md:mb-16 2xl:mb-20">
-              <a href="#section-canhan-xahoi" className="inline-flex items-center justify-center gap-3 px-8 py-5 md:px-10 md:py-6 2xl:px-14 2xl:py-8 rounded-2xl font-semibold text-white transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 bg-linear-to-br from-navy to-navy-light text-lg md:text-xl 2xl:text-2xl">
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path d="M12 8v4l3 3" /></svg>
-                Cơ sở lý luận
-              </a>
-              <a href="#section-casestudy" className="inline-flex items-center justify-center gap-3 px-8 py-5 md:px-10 md:py-6 2xl:px-14 2xl:py-8 rounded-2xl font-semibold transition-all duration-300 hover:shadow-xl hover:-translate-y-1 text-dred border-2 border-dred bg-transparent hover:bg-dred/5 text-lg md:text-xl 2xl:text-2xl">
-                <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2h2a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
-                Phân tích tình huống
-              </a>
+            <div className="animate-fade-rise-delay-2 flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => {
+                  const el = scrollContainerRef?.current;
+                  if (el) el.scrollTo({ top: (el.scrollHeight - el.clientHeight) * SECTION_PEAKS[1], behavior: 'smooth' });
+                }}
+                className="liquid-glass inline-flex items-center justify-center gap-2 rounded-full px-14 py-5 text-base text-white transition-all duration-200 hover:scale-[1.03] active:scale-[0.98] cursor-pointer"
+              >
+                Bắt đầu hành trình
+              </button>
+              <button
+                onClick={() => {
+                  const el = scrollContainerRef?.current;
+                  if (el) el.scrollTo({ top: (el.scrollHeight - el.clientHeight) * SECTION_PEAKS[2], behavior: 'smooth' });
+                }}
+                className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-5 text-base transition-all duration-200 hover:scale-[1.03] cursor-pointer text-white/55 font-sans"
+                style={{ fontSize: '0.9rem' }}
+              >
+                Xem tình huống →
+              </button>
             </div>
 
-            <div className="pt-8 2xl:pt-12 border-t border-navy/10 grid grid-cols-3 gap-8 md:gap-12 2xl:gap-20">
-              {[ { value: '2', label: 'Luận điểm lớn', color: 'text-navy' }, { value: '1', label: 'Tình huống', color: 'text-dred' }, { value: '∞', label: 'Giá trị thực tiễn', color: 'text-beige' } ].map(({ value, label, color }) => (
+            <div
+              className="animate-fade-rise-delay-3 pt-8 mt-8 grid grid-cols-3 gap-6"
+              style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+            >
+              {[
+                { value: '2', label: 'Luận điểm lớn', color: 'rgba(100,255,218,0.8)' },
+                { value: '1', label: 'Tình huống thực tế', color: 'rgba(212,163,115,0.8)' },
+                { value: '∞', label: 'Giá trị thực tiễn', color: 'rgba(255,255,255,0.5)' },
+              ].map(({ value, label, color }) => (
                 <div key={label}>
-                  <p className={`font-serif font-bold ${color} text-5xl md:text-6xl 2xl:text-8xl leading-none`}>{value}</p>
-                  <p className="text-body/50 font-medium mt-2 text-base md:text-lg 2xl:text-xl">{label}</p>
+                  <p style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2rem, 4vw, 3rem)', color, lineHeight: 1 }}>{value}</p>
+                  <p className="mt-2 text-xs text-white/30 font-sans">{label}</p>
                 </div>
               ))}
             </div>
-          </AnimatedView>
 
-          <AnimatedView delay={0.25} direction="left" className="flex items-center justify-center w-full lg:-translate-y-12 2xl:-translate-y-20 relative">
-            <motion.div 
-              className="relative w-full max-w-2xl 2xl:max-w-4xl mx-auto"
-              style={{ perspective: 1000 }}
-              whileHover={{ rotateX: 2, rotateY: -2 }} 
-              transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            >
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
-                <div className="w-96 h-96 2xl:w-150 2xl:h-150 rounded-full opacity-10 bg-[radial-gradient(circle,rgba(30,58,95,0.1)_0%,transparent_70%)]" />
-              </div>
-
-              <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto" aria-label="Biểu đồ tương quan con người và xã hội">
-                <defs>
-                  <radialGradient id="hero-core-grad" cx="40%" cy="35%" r="70%">
-                    <stop offset="0%" stopColor="#2A4F80" /> <stop offset="100%" stopColor="#1E3A5F" />
-                  </radialGradient>
-                  <filter id="active-softer-glow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur stdDeviation="3.5" result="blur" />
-                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-                  </filter>
-                </defs>
-
-                <g fontFamily="Inter, serif" fontStyle="italic" fontSize="5.5" fill="#D4A373" letterSpacing="0.5" className="pointer-events-none">
-                  {[ { x: 260, y: 80, rot: -12, text: '"Thống nhất cái chung & cái riêng"' }, { x: 60, y: 80, rot: 15, text: '"Lãnh tụ dẫn đường"' }, { x: 70, y: 340, rot: -8, text: '"Quần chúng là chủ thể lịch sử"' }, { x: 260, y: 345, rot: 10, text: '"Mục tiêu giải phóng con người"' }, { x: 135, y: 155, rot: -25, text: 'Bản thể luận', sz: 4.5, op: 0.3 } ].map((q, i) => (
-                    <motion.text key={i} x={q.x} y={q.y} transform={`rotate(${q.rot} ${q.x} ${q.y})`} fontSize={q.sz || 5.5} opacity={q.op || 0.55} variants={floatingQuoteVariants} animate="animate">{q.text}</motion.text>
-                  ))}
-                </g>
-
-                <g className="orbits pointer-events-none">
-                  <motion.circle cx="200" cy="200" r="175" stroke="#8B1E3F" strokeWidth="1" strokeDasharray="8 6" opacity={0.15} animate={{ opacity: (hoveredNode && philosophicalContent[hoveredNode]?.orbit === 'outer') ? 0.4 : 0.15 }} transition={{ duration: 0.5 }}/>
-                  <motion.circle cx="200" cy="200" r="145" stroke="#1E3A5F" strokeWidth="1" strokeDasharray="4 8" opacity="0.15" animate={{ opacity: (hoveredNode && philosophicalContent[hoveredNode]?.orbit === 'middle') ? 0.4 : 0.15 }} transition={{ duration: 0.5 }}/>
-                  <motion.circle cx="200" cy="200" r="110" stroke="#1E3A5F" strokeWidth="1.5" strokeDasharray="2 5" opacity="0.15" animate={{ opacity: (hoveredNode && philosophicalContent[hoveredNode]?.orbit === 'inner') ? 0.4 : 0.15 }} transition={{ duration: 0.5 }}/>
-                </g>
-
-                <g className="lines pointer-events-none" strokeWidth="2" strokeDasharray="4 4" opacity="0.4">
-                  {[ { id: 'ca_nhan', x: 200, y: 52, color: '#1E3A5F' }, { id: 'xa_hoi', x: 340, y: 290, color: '#8B1E3F' }, { id: 'nhan_dan', x: 60, y: 290, color: '#2A4F80' }, { id: 'giai_cap', x: 362.5, y: 138, color: '#8B1E3F', w: 1.5, das: '3 4' }, { id: 'lich_su', x: 35, y: 138, color: '#1E3A5F', w: 1.5, das: '3 4' }, { id: 'hanh_phuc', x: 200, y: 357, color: '#D4A373' } ].map((l, i) => (
-                    <motion.path key={l.id} d={`M200 200 L${l.x} ${l.y}`} stroke={l.color} strokeWidth={l.w || 2} strokeDasharray={l.das || "4 4"} custom={i} initial="hidden" animate="visible" variants={lineDrawVariants} />
-                  ))}
-                </g>
-
-                <g className="thought-flows pointer-events-none">
-                  {[ { cx: 155, cy: 120, r: 4, fill: '#D4A373', delay: '0.5s' }, { cx: 265, cy: 108, r: 4, fill: '#8B1E3F', delay: '1s' }, { cx: 310, cy: 210, r: 5, fill: '#1E3A5F', delay: '1.5s' }, { cx: 95, cy: 225, r: 4, fill: '#D4A373', delay: '0.8s' }, { cx: 138, cy: 315, r: 4, fill: '#8B1E3F', delay: '1.3s' }, { cx: 262, cy: 320, r: 4, fill: '#1E3A5F', delay: '0.3s' }, ].map((p, i) => (
-                    <circle key={i} {...p} opacity="0.6" className="svg-node-slow" style={{ animationDelay: p.delay }} />
-                  ))}
-                </g>
-
-                <motion.g 
-                  id="core" className="cursor-pointer" 
-                  onClick={() => setActiveNode(activeNode === 'core' ? null : 'core')}
-                  onMouseEnter={() => setHoveredNode('core')}
-                  onMouseLeave={() => setHoveredNode(null)}
-                  animate={isDimmed('core') ? 'dimmed' : (activeNode === 'core' ? 'active' : 'normal')}
-                  whileHover="hover" variants={nodeVariants} style={{ transformOrigin: "200px 200px" }}
-                >
-                  <motion.circle cx="200" cy="200" r={48} stroke="#D4A373" strokeWidth="0.5" opacity="0.3" animate={{ r: [48, 51, 48] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} />
-                  {activeNode === 'core' && ( <motion.circle cx="200" cy="200" r={48} stroke="#D4A373" strokeWidth="1" opacity="0.8" initial={{ r: 48 }} animate={{ r: 56, opacity: 0 }} transition={{ duration: 1.5, repeat: Infinity }} fill="none"/> )}
-                  <circle cx="200" cy="200" r="48" fill="url(#hero-core-grad)" opacity="0.95" />
-                  <circle cx="200" cy="200" r="48" stroke="#D4A373" strokeWidth="2" opacity="0.8" fill="none" />
-                  <text x="200" y="204.5" textAnchor="middle" fontFamily="Inter" fontSize="12" fontWeight="800" fill="#ffffff" letterSpacing="1">CON NGƯỜI</text>
-                </motion.g>
-
-                {[
-                  { id: 'ca_nhan', cx: 200, cy: 52, r: 32, fill: '#1E3A5F', text: 'CÁ NHÂN', textX: 200, textY: 56, sz: 10 },
-                  { id: 'xa_hoi', cx: 340, cy: 290, r: 32, fill: '#8B1E3F', text: 'XÃ HỘI', textX: 340, textY: 294, sz: 10 },
-                  { id: 'nhan_dan', cx: 60, cy: 290, r: 32, fill: '#2A4F80', text: 'NHÂN DÂN', textX: 60, textY: 294, sz: 10 },
-                  { id: 'giai_cap', cx: 362.5, cy: 138, r: 24, fill: '#8B1E3F', text: 'GIAI CẤP', textX: 362.5, textY: 141, sz: 8, fw: 800 },
-                  { id: 'lich_su', cx: 35, cy: 138, r: 24, fill: '#1E3A5F', text: 'LỊCH SỬ', textX: 35, textY: 141, sz: 8 },
-                  { id: 'hanh_phuc', cx: 200, cy: 357, r: 24, fill: '#D4A373', text: 'HẠNH PHÚC', textX: 200, textY: 360, sz: 7.5, fw: 800, textFill: 'white' }
-                ].map((n) => (
-                  <motion.g 
-                    key={n.id} id={n.id} className="cursor-pointer"
-                    onClick={() => setActiveNode(activeNode === n.id ? null : n.id)}
-                    onMouseEnter={() => setHoveredNode(n.id)}
-                    onMouseLeave={() => setHoveredNode(null)}
-                    animate={isDimmed(n.id) ? 'dimmed' : (activeNode === n.id ? 'active' : 'normal')}
-                    whileHover="hover" variants={nodeVariants} style={{ transformOrigin: `${n.cx}px ${n.cy}px` }}
-                  >
-                    {activeNode === n.id && ( <motion.circle cx={n.cx} cy={n.cy} r={n.r || 24} stroke={n.id === 'hanh_phuc' ? '#1E3A5F' : '#D4A373'} strokeWidth="1" opacity="0.8" initial={{ r: n.r || 24 }} animate={{ r: (n.r || 24) + 8, opacity: 0 }} transition={{ duration: 1.5, repeat: Infinity }} fill="none"/> )}
-                    {getNodeFill(n.id, n.fill) === n.fill && !isDimmed(n.id) && activeNode !== n.id && hoveredNode && philosophicalContent[hoveredNode]?.relations?.includes(n.id) && ( <motion.circle cx={n.cx} cy={n.cy} r={(n.r || 24) + 2} fill={n.fill} opacity={0.2} animate={{ opacity: [0.1, 0.3, 0.1] }} transition={{ duration: 2, repeat: Infinity }}/> )}
-                    
-                    <motion.circle cx={n.cx} cy={n.cy} r={n.r} fill={getNodeFill(n.id, n.fill)} opacity={getNodeFill(n.id, n.fill) === '#526175' ? 0.6 : 0.95} transition={{ duration: 0.5 }} />
-                    <circle cx={n.cx} cy={n.cy} r={n.r} stroke={n.id === 'hanh_phuc' ? '#1E3A5F' : '#D4A373'} strokeWidth={n.fw === 800 ? 1.5 : 1} fill="none" opacity={isDimmed(n.id) ? 0.2 : (n.id === 'hanh_phuc' ? 0.3 : 0.8)} />
-                    <text x={n.textX} y={n.textY} textAnchor="middle" fontFamily="Inter" fontSize={n.sz} fontWeight={n.fw || 700} fill={n.textFill || "white"} letterSpacing="0.5" opacity={isDimmed(n.id) ? 0.3 : 1}>
-                      {n.text}
-                    </text>
-                  </motion.g>
-                ))}
-              </svg>
-
-              <AnimatePresence>
-                {activeNode && nodeData && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }} 
-                    animate={{ opacity: 1, y: 0, scale: 1 }} 
-                    exit={{ opacity: 0, y: 5, scale: 0.98 }} 
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    className="absolute z-50 p-6 rounded-2xl bg-white/95 backdrop-blur-md shadow-[0_20px_50px_rgba(30,58,95,0.15)] border border-beige/30 w-72 md:w-80 pointer-events-auto left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                  >
-                    <button onClick={() => setActiveNode(null)} className="absolute top-4 right-4 text-body/40 hover:text-dred transition-colors"> 
-                      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/></svg> 
-                    </button>
-                    <h4 className="font-serif font-bold text-navy text-xl mb-2 tracking-wider uppercase pr-6 border-b border-navy/10 pb-2 inline-block">
-                      {nodeData.title}
-                    </h4>
-                    <p className="text-body/80 text-sm mb-4 leading-relaxed">{nodeData.desc}</p>
-                    <div className="bg-beige/10 p-3 rounded-lg border-l-2 border-dred">
-                      <p className="font-serif italic text-navy/90 text-sm leading-relaxed mb-1">{nodeData.quote}</p>
-                      <cite className="block not-italic font-sans font-bold text-dred tracking-wider uppercase text-[10px] opacity-80">{nodeData.cite}</cite>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <p className="text-center text-body/40 mt-8 2xl:mt-12 font-medium uppercase tracking-widest text-sm md:text-base 2xl:text-xl">
-                Cõi mạng tri thức: Con người – Xã hội – Lịch sử
-              </p>
-            </motion.div>
-          </AnimatedView>
+          </div>
         </div>
+        <div className="hidden lg:block pointer-events-none"></div>
       </div>
-    </section>
+    </div>
   );
-}
+} 

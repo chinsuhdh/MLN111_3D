@@ -30,7 +30,7 @@ export default function Tooltip({ term, definition, children }: TooltipProps) {
       style={{ outline: 'none' }}
     >
       {/* Dotted underline to signal interactivity */}
-      <span className="border-b-2 border-dotted border-dred/60 cursor-help pb-0.5 text-inherit">
+      <span className="border-b border-dotted cursor-help pb-0.5 text-inherit" style={{ borderColor: 'rgba(100,255,218,0.5)' }}>
         {children}
       </span>
 
