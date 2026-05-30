@@ -168,7 +168,7 @@ export default function Hero() {
               <button
                 onClick={() => {
                   const el = scrollContainerRef?.current;
-                  if (el) el.scrollTo({ top: (el.scrollHeight - el.clientHeight) * SECTION_PEAKS[2], behavior: 'smooth' });
+                  if (el) el.scrollTo({ top: (el.scrollHeight - el.clientHeight) * SECTION_PEAKS[5], behavior: 'smooth' });
                 }}
                 className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-5 text-base transition-all duration-200 hover:scale-[1.03] cursor-pointer text-white/55 font-sans"
                 style={{ fontSize: '0.9rem' }}

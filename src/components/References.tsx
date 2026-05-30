@@ -4,6 +4,11 @@ import { useState, useEffect, useContext, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PhilosophyScrollContext, SECTION_BOUNDS } from '../hooks/usePhilosophyScroll';
 
+// Projector-optimised shadows
+const NARRATIVE_SHADOW =
+  '0 2px 10px rgba(0,0,0,0.95), 0 8px 30px rgba(0,0,0,0.7), 0 0 40px rgba(255,255,255,0.12)';
+const BODY_SHADOW = '0 2px 8px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.6)';
+
 // ─────────────────────────────────────────────────────────────────────────────
 // TYPES
 // ─────────────────────────────────────────────────────────────────────────────
@@ -161,29 +166,29 @@ function RecordCard({ section, index }: { section: Section; index: number }) {
       } as never}
     >
       <div className="px-5 py-4 flex items-start gap-4" style={{ borderBottom: `1px solid ${accent}12` }}>
-        <div className="flex-shrink-0 w-9 h-9 rounded-lg flex items-center justify-center mt-0.5" style={{ background: `${accent}10`, border: `1px solid ${accent}28` }}>
-          <span className="text-[11px] font-black font-mono" style={{ color: accent }}>{String(section.id).padStart(2, '0')}</span>
+        <div className="flex-shrink-0 w-11 h-11 rounded-lg flex items-center justify-center mt-0.5" style={{ background: `${accent}10`, border: `1px solid ${accent}28` }}>
+          <span className="text-base font-black font-mono" style={{ color: accent }}>{String(section.id).padStart(2, '0')}</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[8px] tracking-[0.22em] uppercase mb-1.5" style={{ fontFamily: 'monospace', color: `${accent}70` }}>
+          <p className="text-xs tracking-[0.22em] uppercase mb-2" style={{ fontFamily: 'monospace', color: `${accent}90` }}>
             ▸ RECORD_ID: {String(section.id).padStart(2, '0')} · PRIORITY: HIGH
           </p>
-          <h3 className="text-base font-semibold text-white leading-snug" style={{ fontFamily: 'var(--font-display)' }}>{section.title}</h3>
+          <h3 className="text-xl font-semibold text-white leading-snug" style={{ fontFamily: 'var(--font-display)', textShadow: NARRATIVE_SHADOW }}>{section.title}</h3>
         </div>
-        <div className="flex-shrink-0 px-2 py-1 rounded-md text-[8px] font-mono font-bold tracking-widest" style={{ color: accent, background: `${accent}10`, border: `1px solid ${accent}22` }}>
+        <div className="flex-shrink-0 px-2.5 py-1.5 rounded-md text-xs font-mono font-bold tracking-widest" style={{ color: accent, background: `${accent}10`, border: `1px solid ${accent}22` }}>
           VERIFIED
         </div>
       </div>
       <div className="px-5 py-4 space-y-4">
-        <p className="text-sm text-white/55 leading-relaxed">{formatTextWithCitations(section.content)}</p>
+        <p className="text-lg text-white/70 leading-relaxed" style={{ textShadow: BODY_SHADOW }}>{formatTextWithCitations(section.content)}</p>
         {section.subsections?.map((sub, i) => (
-          <div key={i} className="rounded-lg p-4" style={{ background: `${accent}05`, borderLeft: `2px solid ${accent}25` }}>
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style={{ color: `${accent}90`, fontFamily: 'monospace' }}>◈ {sub.title}</h4>
-            <ul className="space-y-1.5">
+          <div key={i} className="rounded-lg p-5" style={{ background: `${accent}05`, borderLeft: `3px solid ${accent}30` }}>
+            <h4 className="text-sm font-bold uppercase tracking-[0.15em] mb-3" style={{ color: `${accent}cc`, fontFamily: 'monospace', textShadow: `0 0 10px ${accent}50` }}>◈ {sub.title}</h4>
+            <ul className="space-y-2.5">
               {sub.details.map((detail, d) => (
-                <li key={d} className="flex items-start gap-2">
-                  <span className="mt-1.5 w-1 h-1 rounded-full flex-shrink-0" style={{ background: `${accent}80` }} />
-                  <span className="text-xs text-white/50 leading-relaxed">{formatTextWithCitations(detail)}</span>
+                <li key={d} className="flex items-start gap-3">
+                  <span className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: `${accent}90`, boxShadow: `0 0 6px ${accent}60` }} />
+                  <span className="text-base text-white/65 leading-relaxed" style={{ textShadow: BODY_SHADOW }}>{formatTextWithCitations(detail)}</span>
                 </li>
               ))}
             </ul>
@@ -223,7 +228,7 @@ export default function References() {
   const [isModalOpen, setIsModalOpen] = useState(false); // <--- TRẠNG THÁI BẬT/TẮT CỬA SỔ
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const s = SECTION_BOUNDS[5];
+  const s = SECTION_BOUNDS[8]; // References is now section index 8
   const opacityIn  = Math.min(1, scrollProgress < s.peak
     ? Math.max(0, (scrollProgress - s.start) / (s.peak - s.start))
     : 1);
@@ -277,7 +282,7 @@ export default function References() {
             animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
             exit={{ opacity: 0, scale: 0.9, filter: 'blur(10px)' }}
             onClick={() => setIsModalOpen(true)}
-            className="group relative flex flex-col items-center justify-center px-16 py-12 rounded-[2rem] transition-transform duration-300 hover:scale-105"
+            className="group relative flex flex-col items-center justify-center px-20 py-16 rounded-[2rem] transition-transform duration-300 hover:scale-105"
             style={{
               background: 'rgba(3,10,20,0.6)',
               border: '1px solid rgba(100,255,218,0.2)',
@@ -287,10 +292,10 @@ export default function References() {
           >
             <div className="absolute inset-0 rounded-[2rem] border-2 border-[#64FFDA]/0 group-hover:border-[#64FFDA]/30 transition-colors duration-500 pointer-events-none" />
             <DataCore active={true} />
-            <p className="mt-8 text-[#64FFDA] font-mono tracking-[0.3em] text-sm font-bold group-hover:text-white transition-colors drop-shadow-[0_0_8px_rgba(100,255,218,0.8)]">
+            <p className="mt-10 text-[#64FFDA] font-mono tracking-[0.3em] text-xl font-bold group-hover:text-white transition-colors drop-shadow-[0_0_12px_rgba(100,255,218,0.9)]">
               [ TRUY CẬP DATABANK ]
             </p>
-            <p className="mt-3 text-white/40 text-[10px] uppercase tracking-widest font-mono">
+            <p className="mt-4 text-white/50 text-base uppercase tracking-widest font-mono">
               Hệ thống tài liệu tham khảo MLN111
             </p>
           </motion.button>
@@ -400,28 +405,28 @@ export default function References() {
                 {!doc ? <LoadingState /> : (
                   <AnimatePresence mode="wait">
                     {activeSection ? (
-                      <motion.div key={activeSection.id} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }} transition={{ duration: 0.35, ease: 'easeOut' }} className="p-6 lg:p-8">
-                        <div className="mb-6">
-                          <div className="flex items-center gap-3 mb-3">
-                            <p className="text-[9px] tracking-[0.25em] uppercase" style={{ fontFamily: 'monospace', color: `${CARD_ACCENT_COLORS[(activeSection.id - 1) % CARD_ACCENT_COLORS.length]}70` }}>▸ RECORD_ID: {String(activeSection.id).padStart(2, '0')} · STATUS: ACTIVE</p>
+                      <motion.div key={activeSection.id} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -8 }} transition={{ duration: 0.35, ease: 'easeOut' }} className="p-6 lg:p-10">
+                        <div className="mb-8">
+                          <div className="flex items-center gap-3 mb-4">
+                            <p className="text-xs tracking-[0.25em] uppercase" style={{ fontFamily: 'monospace', color: `${CARD_ACCENT_COLORS[(activeSection.id - 1) % CARD_ACCENT_COLORS.length]}aa` }}>▸ RECORD_ID: {String(activeSection.id).padStart(2, '0')} · STATUS: ACTIVE</p>
                           </div>
-                          <h2 className="text-2xl lg:text-3xl font-light text-white leading-tight" style={{ fontFamily: 'var(--font-display)' }}>{activeSection.title}</h2>
-                          <div className="mt-3 h-px" style={{ background: `linear-gradient(90deg, ${CARD_ACCENT_COLORS[(activeSection.id - 1) % CARD_ACCENT_COLORS.length]}40, transparent)` }} />
+                          <h2 className="text-3xl lg:text-4xl font-light text-white leading-tight" style={{ fontFamily: 'var(--font-display)', textShadow: NARRATIVE_SHADOW }}>{activeSection.title}</h2>
+                          <div className="mt-4 h-px" style={{ background: `linear-gradient(90deg, ${CARD_ACCENT_COLORS[(activeSection.id - 1) % CARD_ACCENT_COLORS.length]}50, transparent)` }} />
                         </div>
-                        <div className="rounded-xl p-5 mb-5" style={{ background: 'rgba(6,14,28,0.6)', border: '1px solid rgba(255,255,255,0.06)', borderLeft: `3px solid ${CARD_ACCENT_COLORS[(activeSection.id - 1) % CARD_ACCENT_COLORS.length]}40` }}>
-                          <p className="text-sm text-white/60 leading-relaxed">{formatTextWithCitations(activeSection.content)}</p>
+                        <div className="rounded-xl p-6 mb-6" style={{ background: 'rgba(6,14,28,0.6)', border: '1px solid rgba(255,255,255,0.06)', borderLeft: `3px solid ${CARD_ACCENT_COLORS[(activeSection.id - 1) % CARD_ACCENT_COLORS.length]}50` }}>
+                          <p className="text-lg text-white/70 leading-relaxed" style={{ textShadow: BODY_SHADOW }}>{formatTextWithCitations(activeSection.content)}</p>
                         </div>
                         {activeSection.subsections?.map((sub, i) => (
-                          <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.06, duration: 0.4 }} className="rounded-xl mb-4 overflow-hidden" style={{ background: 'rgba(6,14,28,0.55)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <div className="px-5 py-3.5 flex items-center gap-2" style={{ borderBottom: '1px solid rgba(212,163,115,0.08)', background: 'rgba(212,163,115,0.03)' }}>
-                              <span className="text-[9px] font-mono text-[#D4A373]/50 tracking-widest">◈ SUBRECORD</span>
-                              <h4 className="text-sm font-semibold text-[#D4A373]/80">{sub.title}</h4>
+                          <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.06, duration: 0.4 }} className="rounded-xl mb-5 overflow-hidden" style={{ background: 'rgba(6,14,28,0.55)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div className="px-6 py-4 flex items-center gap-3" style={{ borderBottom: '1px solid rgba(212,163,115,0.08)', background: 'rgba(212,163,115,0.03)' }}>
+                              <span className="text-xs font-mono text-[#D4A373]/70 tracking-widest">◈ SUBRECORD</span>
+                              <h4 className="text-lg font-semibold text-[#D4A373]/90" style={{ textShadow: BODY_SHADOW }}>{sub.title}</h4>
                             </div>
-                            <ul className="px-5 py-4 space-y-2">
+                            <ul className="px-6 py-5 space-y-3">
                               {sub.details.map((detail, d) => (
-                                <li key={d} className="flex items-start gap-2.5">
-                                  <span className="mt-2 w-1 h-1 rounded-full flex-shrink-0" style={{ background: 'rgba(212,163,115,0.5)' }} />
-                                  <span className="text-xs text-white/50 leading-relaxed">{formatTextWithCitations(detail)}</span>
+                                <li key={d} className="flex items-start gap-3">
+                                  <span className="mt-2 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'rgba(212,163,115,0.6)', boxShadow: '0 0 5px rgba(212,163,115,0.4)' }} />
+                                  <span className="text-base text-white/65 leading-relaxed" style={{ textShadow: BODY_SHADOW }}>{formatTextWithCitations(detail)}</span>
                                 </li>
                               ))}
                             </ul>
@@ -436,9 +441,9 @@ export default function References() {
                   </AnimatePresence>
                 )}
                 {doc && (
-                  <div className="px-6 lg:px-8 py-8 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                    <blockquote className="text-sm italic text-white/30 leading-relaxed max-w-2xl" style={{ fontFamily: 'var(--font-display)' }}>"Sự phát triển tự do của mỗi người là điều kiện cho sự phát triển tự do của tất cả mọi người."</blockquote>
-                    <cite className="block mt-2 not-italic text-[10px] font-mono tracking-widest uppercase text-[#D4A373]/40">— C.Mác & Ph.Ăng-ghen</cite>
+                  <div className="px-6 lg:px-10 py-8 mt-2" style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                    <blockquote className="text-lg italic text-white/45 leading-relaxed max-w-2xl" style={{ fontFamily: 'var(--font-display)', textShadow: BODY_SHADOW }}>"Sự phát triển tự do của mỗi người là điều kiện cho sự phát triển tự do của tất cả mọi người."</blockquote>
+                    <cite className="block mt-3 not-italic text-sm font-mono tracking-widest uppercase text-[#D4A373]/60" style={{ textShadow: BODY_SHADOW }}>— C.Mác & Ph.Ăng-ghen</cite>
                   </div>
                 )}
               </div>

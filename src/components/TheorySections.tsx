@@ -1,10 +1,21 @@
 import PlanetTheoryHUD from './PlanetTheoryHUD';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SECTION 1 (idx=1): Cá nhân & Xã hội
-// Camera: flies toward CÁ NHÂN planet zone
+// SECTION INDEX TABLE
+//
+//  1 → Cá Nhân P1      (Right)
+//  2 → Cá Nhân P2      (Right)  — same side, continuous feel
+//  3 → Quần Chúng P1   (Left)
+//  4 → Quần Chúng P2   (Left)   — same side
+//  5 → Tình Huống P1   (Right)
+//  6 → Tình Huống P2   (Right)  — same side
 // ─────────────────────────────────────────────────────────────────────────────
-function SectionCaNhanXaHoi() {
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SECTION 1 (idx=1): Cá nhân & Xã hội — Part 1
+// Blocks: foundational thesis + dialectical relation  (3 blocks)
+// ─────────────────────────────────────────────────────────────────────────────
+function SectionCaNhanP1() {
   return (
     <PlanetTheoryHUD
       sectionIdx={1}
@@ -28,6 +39,25 @@ function SectionCaNhanXaHoi() {
           label: 'Quan hệ biện chứng',
           html: 'Cá nhân và xã hội <strong>không tách rời nhau</strong>. Quan hệ cá nhân – xã hội là <strong>tất yếu lịch sử</strong>, là tiền đề và điều kiện tồn tại và phát triển của cả cá nhân lẫn xã hội.',
         },
+      ]}
+    />
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SECTION 2 (idx=2): Cá nhân & Xã hội — Part 2
+// Blocks: class nature + methodology  (4 blocks)
+// ─────────────────────────────────────────────────────────────────────────────
+function SectionCaNhanP2() {
+  return (
+    <PlanetTheoryHUD
+      sectionIdx={2}
+      title="Cá Nhân & Xã Hội"
+      eyebrow="Phần 01 · Tiếp theo"
+      accentColor="#64FFDA"
+      subtitle="Tính giai cấp, tính nhân loại & nguyên tắc phương pháp luận"
+      coords={{ lat: '34.0°N', lon: '91.5°E', alt: '31 AU' }}
+      blocks={[
         {
           type: 'heading',
           label: 'Phân tầng bản chất',
@@ -45,22 +75,9 @@ function SectionCaNhanXaHoi() {
           ],
         },
         {
-          type: 'heading',
-          label: 'Ý nghĩa phương pháp luận',
-          text: 'Nguyên tắc nhìn nhận Con người',
-        },
-        {
           type: 'highlight',
           label: '◉ Phương pháp luận',
-          html: 'Phải luôn chú ý giải quyết đúng đắn mối quan hệ <strong>xã hội – cá nhân</strong>, tránh hai khuynh hướng cực đoan: <strong>đề cao quá mức cá nhân</strong> (chủ nghĩa cá nhân) hoặc <strong>tuyệt đối hóa xã hội</strong> (xóa bỏ quyền cá nhân). Xem xét con người phải đặt trong tổng thể các quan hệ xã hội lịch sử – cụ thể.',
-        },
-        {
-          type: 'numbered-list',
-          items: [
-            'Không tách con người ra khỏi các quan hệ xã hội cụ thể mà nó đang sống',
-            'Không quy toàn bộ bản chất con người về một quan hệ nào đó',
-            'Phải thấy sự thống nhất giữa cái chung (loài) và cái riêng (cá thể)',
-          ],
+          html: 'Phải luôn chú ý giải quyết đúng đắn mối quan hệ <strong>xã hội – cá nhân</strong>, tránh hai khuynh hướng cực đoan: <strong>đề cao quá mức cá nhân</strong> (chủ nghĩa cá nhân) hoặc <strong>tuyệt đối hóa xã hội</strong> (xóa bỏ quyền cá nhân).',
         },
       ]}
     />
@@ -68,17 +85,17 @@ function SectionCaNhanXaHoi() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SECTION 2 (idx=2): Quần chúng nhân dân & Lãnh tụ
-// Camera: flies toward QUẦN CHÚNG + LÃNH TỤ zone
+// SECTION 3 (idx=3): Quần chúng & Lãnh tụ — Part 1
+// Blocks: masses as creators + 3 roles  (3 blocks)
 // ─────────────────────────────────────────────────────────────────────────────
-function SectionQuanChungLanhTu() {
+function SectionQuanChungP1() {
   return (
     <PlanetTheoryHUD
-      sectionIdx={2}
+      sectionIdx={3}
       title="Quần Chúng & Lãnh Tụ"
       eyebrow="Phần 02 · Hành tinh QUẦN CHÚNG"
       accentColor="#D4A373"
-      subtitle="Động lực lịch sử — sức mạnh tập thể & vai trò cá nhân kiệt xuất"
+      subtitle="Động lực lịch sử — sức mạnh tập thể"
       coords={{ lat: '44.0°S', lon: '270.0°W', alt: '44 AU' }}
       blocks={[
         {
@@ -98,6 +115,25 @@ function SectionQuanChungLanhTu() {
             '<strong>Sáng tạo ra toàn bộ các giá trị văn hóa tinh thần</strong> — nguồn gốc của mọi nền văn minh nhân loại',
           ],
         },
+      ]}
+    />
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SECTION 4 (idx=4): Quần chúng & Lãnh tụ — Part 2
+// Blocks: outstanding leader + Lenin quote + dialectical relation  (4 blocks)
+// ─────────────────────────────────────────────────────────────────────────────
+function SectionQuanChungP2() {
+  return (
+    <PlanetTheoryHUD
+      sectionIdx={4}
+      title="Quần Chúng & Lãnh Tụ"
+      eyebrow="Phần 02 · Tiếp theo"
+      accentColor="#D4A373"
+      subtitle="Vai trò cá nhân kiệt xuất & mối quan hệ biện chứng"
+      coords={{ lat: '44.0°S', lon: '265.0°W', alt: '40 AU' }}
+      blocks={[
         {
           type: 'heading',
           label: 'Lãnh tụ kiệt xuất',
@@ -117,27 +153,19 @@ function SectionQuanChungLanhTu() {
           label: '⇄ Mối quan hệ biện chứng',
           html: '<strong>Quần chúng nhân dân và phong trào của họ tạo nên các lãnh tụ.</strong> Không được <strong>tuyệt đối hóa vai trò lãnh tụ</strong> dẫn đến sùng bái cá nhân, cũng không được <strong>xem nhẹ vai trò của cá nhân kiệt xuất</strong> mà không phát huy sức mạnh sáng tạo của quần chúng.',
         },
-        {
-          type: 'numbered-list',
-          items: [
-            '<strong>Định hướng tư tưởng</strong> — vạch ra con đường đúng đắn cho phong trào',
-            '<strong>Tổ chức lực lượng</strong> — biến sức mạnh phân tán thành sức mạnh thống nhất',
-            '<strong>Dẫn dắt quần chúng</strong> — biến lý luận thành hành động cách mạng',
-          ],
-        },
       ]}
     />
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SECTION 3 (idx=3): Phân tích tình huống — Trưởng nhóm C
-// Camera: flies toward XÃ HỘI zone / wide philosophical angle
+// SECTION 5 (idx=5): Tình huống Trưởng nhóm C — Part 1
+// Blocks: situation description + theory link + analysis  (4 blocks)
 // ─────────────────────────────────────────────────────────────────────────────
-function SectionCaseStudy() {
+function SectionCaseStudyP1() {
   return (
     <PlanetTheoryHUD
-      sectionIdx={3}
+      sectionIdx={5}
       title="Phân Tích Tình Huống"
       eyebrow="Phần 03 · Tình huống Trưởng nhóm C"
       accentColor="#38BDF8"
@@ -159,18 +187,31 @@ function SectionCaseStudy() {
           html: 'Tình huống thể hiện rõ mối quan hệ biện chứng <strong>Cá nhân – Xã hội</strong>: cá nhân (thành viên) phải đặt lợi ích cá nhân trong mối quan hệ với lợi ích tập thể (nhóm). Trưởng nhóm đóng vai trò như một <strong>lãnh tụ vi mô</strong> — cần dẫn dắt, tổ chức và định hướng.',
         },
         {
-          type: 'heading',
-          label: 'Phân tích theo góc độ Mác–Lênin',
-          text: 'Quan hệ Quần chúng & Lãnh tụ trong nhóm nhỏ',
-        },
-        {
           type: 'bullet-list',
           items: [
             '<strong>Quần chúng nhân dân</strong> (các thành viên nhóm) là <strong>động lực</strong> — không có sự tham gia tích cực của họ, nhóm không thể hoàn thành nhiệm vụ',
             '<strong>Lãnh tụ</strong> (trưởng nhóm) cần <strong>nhận thức đúng quy luật</strong>: phân công hợp lý, lắng nghe nguyện vọng, đặt mục tiêu chung lên trên',
-            'Tránh <strong>độc đoán</strong> (tuyệt đối hóa vai trò cá nhân) và tránh <strong>buông lỏng</strong> (xem nhẹ vai trò định hướng)',
           ],
         },
+      ]}
+    />
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SECTION 6 (idx=6): Tình huống Trưởng nhóm C — Part 2
+// Blocks: solutions + conclusion  (3 blocks)
+// ─────────────────────────────────────────────────────────────────────────────
+function SectionCaseStudyP2() {
+  return (
+    <PlanetTheoryHUD
+      sectionIdx={6}
+      title="Phân Tích Tình Huống"
+      eyebrow="Phần 03 · Giải pháp & Kết luận"
+      accentColor="#38BDF8"
+      subtitle="Ứng dụng nguyên tắc biện chứng vào thực tiễn nhóm"
+      coords={{ lat: '10.8°N', lon: '109.2°E', alt: '10 AU' }}
+      blocks={[
         {
           type: 'heading',
           label: 'Giải pháp đề xuất',
@@ -196,14 +237,18 @@ function SectionCaseStudy() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// EXPORT
+// EXPORT — all 6 theory chunks rendered simultaneously;
+// each controls its own visibility via scroll progress in PlanetTheoryHUD
 // ─────────────────────────────────────────────────────────────────────────────
 export default function TheorySections() {
   return (
     <>
-      <SectionCaNhanXaHoi />
-      <SectionQuanChungLanhTu />
-      <SectionCaseStudy />
+      <SectionCaNhanP1 />
+      <SectionCaNhanP2 />
+      <SectionQuanChungP1 />
+      <SectionQuanChungP2 />
+      <SectionCaseStudyP1 />
+      <SectionCaseStudyP2 />
     </>
   );
 }

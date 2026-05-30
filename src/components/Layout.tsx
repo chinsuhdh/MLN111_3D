@@ -30,13 +30,16 @@ function ScrollProgressBar({ progress }: { progress: number }) {
 // ─────────────────────────────────────────────────────────────────────────────
 // NAVBAR — 6 sections
 // ─────────────────────────────────────────────────────────────────────────────
+// Nav items: sectionIdx points to the FIRST PART of each topic.
+// activeGroup lists ALL indices that should highlight this nav item
+// (so P1 and P2 both light up the same button).
 const NAV_LINKS = [
-  { sectionIdx: 0, label: 'Giới thiệu' },
-  { sectionIdx: 1, label: 'Cá nhân & Xã hội' },
-  { sectionIdx: 2, label: 'Quần chúng & Lãnh tụ' },
-  { sectionIdx: 3, label: 'Tình huống' },
-  { sectionIdx: 4, label: 'Tổng quan' },
-  { sectionIdx: 5, label: 'Tài liệu' },
+  { sectionIdx: 0, label: 'Giới thiệu',             activeGroup: [0] },
+  { sectionIdx: 1, label: 'Cá nhân & Xã hội',         activeGroup: [1, 2] },
+  { sectionIdx: 3, label: 'Quần chúng & Lãnh tụ', activeGroup: [3, 4] },
+  { sectionIdx: 5, label: 'Tình huống',               activeGroup: [5, 6] },
+  { sectionIdx: 7, label: 'Tổng quan',                activeGroup: [7] },
+  { sectionIdx: 8, label: 'Tài liệu',                activeGroup: [8] },
 ];
 
 function Navbar({
@@ -67,8 +70,8 @@ function Navbar({
 
         {/* Desktop nav */}
         <ul className="hidden md:flex items-center gap-0.5 bg-black/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/5">
-          {NAV_LINKS.map(({ sectionIdx, label }) => {
-            const isActive = activeSection === sectionIdx;
+          {NAV_LINKS.map(({ sectionIdx, label, activeGroup }) => {
+            const isActive = activeGroup.includes(activeSection);
             return (
               <li key={sectionIdx}>
                 <button
@@ -116,12 +119,12 @@ function Navbar({
         style={{ borderTop: menuOpen ? '1px solid rgba(255,255,255,0.06)' : 'none' }}
       >
         <div className="px-6 py-3 flex flex-col gap-1" style={{ background: 'rgba(3,10,20,0.97)' }}>
-          {NAV_LINKS.map(({ sectionIdx, label }) => (
+          {NAV_LINKS.map(({ sectionIdx, label, activeGroup }) => (
             <button
               key={sectionIdx}
               onClick={() => { onFlyTo(sectionIdx); setMenuOpen(false); }}
               className={`text-left px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                activeSection === sectionIdx ? 'text-white bg-white/6' : 'text-white/45 hover:text-white/75'
+                activeGroup.includes(activeSection) ? 'text-white bg-white/6' : 'text-white/45 hover:text-white/75'
               }`}
             >
               {label}

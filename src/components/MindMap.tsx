@@ -8,7 +8,7 @@ export default function ConstellationMindMap() {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
   // Scroll-driven visibility
-  const s = SECTION_BOUNDS[4];
+  const s = SECTION_BOUNDS[7]; // Overview is now section index 7
   const opacityIn  = Math.min(1, scrollProgress < s.peak
     ? Math.max(0, (scrollProgress - s.start) / (s.peak - s.start))
     : 1);

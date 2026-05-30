@@ -18,40 +18,87 @@ export const PhilosophyScrollContext = createContext<PhilosophyScrollState>({
 
 export const usePhilosophyScroll = () => useContext(PhilosophyScrollContext);
 
-// 6 scroll pages: Hero, S1 (Cá nhân & Xã hội), S2 (Quần chúng & Lãnh tụ), S3 (Tình huống), Overview, References
-export const TOTAL_PAGES = 6;
+// ─────────────────────────────────────────────────────────────────────────────
+// SECTION MAP (9 sections = 9 scroll pages)
+//
+//  0  Hero
+//  1  Cá Nhân – P1   (Right)  Camera: approaching CÁ NHÂN
+//  2  Cá Nhân – P2   (Right)  Camera: slow orbit around CÁ NHÂN
+//  3  Quần Chúng – P1 (Left)  Camera: approaching QUẦN CHÚNG
+//  4  Quần Chúng – P2 (Left)  Camera: orbit QUẦN CHÚNG → LÃNH TỤ
+//  5  Tình Huống – P1 (Right) Camera: approaching XÃ HỘI
+//  6  Tình Huống – P2 (Right) Camera: orbit XÃ HỘI
+//  7  Overview        (Left)  Camera: full system pullback
+//  8  References      (Left)  Camera: gentle retreat
+// ─────────────────────────────────────────────────────────────────────────────
+export const TOTAL_PAGES = 9;
 
 // Each band: start → peak (fully visible) → exit (fade starts) → end
+// 9 sections, each occupying ~1/9 of scroll space (≈ 0.111 each)
 export const SECTION_BOUNDS = [
-  { start: 0.000, peak: 0.030, exit: 0.130, end: 0.165 }, // 0: Hero
-  { start: 0.130, peak: 0.200, exit: 0.295, end: 0.330 }, // 1: Cá nhân & Xã hội
-  { start: 0.295, peak: 0.365, exit: 0.460, end: 0.495 }, // 2: Quần chúng & Lãnh tụ
-  { start: 0.460, peak: 0.530, exit: 0.625, end: 0.660 }, // 3: Case Study / Tình huống
-  { start: 0.625, peak: 0.700, exit: 0.820, end: 0.860 }, // 4: Overview
-  { start: 0.820, peak: 0.880, exit: 0.970, end: 1.000 }, // 5: References
+  { start: 0.000, peak: 0.020, exit: 0.085, end: 0.111 }, // 0: Hero
+  { start: 0.085, peak: 0.130, exit: 0.195, end: 0.222 }, // 1: Cá Nhân P1
+  { start: 0.195, peak: 0.240, exit: 0.305, end: 0.333 }, // 2: Cá Nhân P2
+  { start: 0.305, peak: 0.350, exit: 0.415, end: 0.444 }, // 3: Quần Chúng P1
+  { start: 0.415, peak: 0.460, exit: 0.525, end: 0.555 }, // 4: Quần Chúng P2
+  { start: 0.525, peak: 0.570, exit: 0.635, end: 0.666 }, // 5: Tình Huống P1
+  { start: 0.635, peak: 0.680, exit: 0.745, end: 0.777 }, // 6: Tình Huống P2
+  { start: 0.745, peak: 0.800, exit: 0.878, end: 0.900 }, // 7: Overview
+  { start: 0.878, peak: 0.920, exit: 0.975, end: 1.000 }, // 8: References
 ] as const;
 
-// Cinematic camera waypoints for 6 sections
+// ─────────────────────────────────────────────────────────────────────────────
+// CAMERA WAYPOINTS
+// Part-2 waypoints are subtle orbits of the same planet — same zone but
+// shifted angle/distance so the audience feels movement without disorientation.
+// ─────────────────────────────────────────────────────────────────────────────
 export const CAMERA_WAYPOINTS = [
-  { pos: [0,   48, 125] as [number, number, number] }, // 0: Hero — wide overview
-  { pos: [30,  12,  42] as [number, number, number] }, // 1: CÁ NHÂN zone (r=34, angle≈0)
-  { pos: [-20, -8,  28] as [number, number, number] }, // 2: QUẦN CHÚNG + LÃNH TỤ combined
-  { pos: [-48,  8, -34] as [number, number, number] }, // 3: Case Study / Tình huống (wide angle)
-  { pos: [0,   85, 145] as [number, number, number] }, // 4: Overview — full system
-  { pos: [0,   55, 105] as [number, number, number] }, // 5: References
+  { pos: [  0,  48, 125] as [number, number, number] }, // 0: Hero — wide overview
+  { pos: [ 30,  12,  42] as [number, number, number] }, // 1: Cá Nhân P1 — direct approach
+  { pos: [ 22,   6,  36] as [number, number, number] }, // 2: Cá Nhân P2 — orbit right+closer
+  { pos: [-20,  -8,  28] as [number, number, number] }, // 3: Quần Chúng P1 — approach
+  { pos: [-28,   4,  22] as [number, number, number] }, // 4: Quần Chúng P2 — drift toward Lãnh Tụ
+  { pos: [-48,   8, -34] as [number, number, number] }, // 5: Tình Huống P1 — approach XÃ HỘI
+  { pos: [-40,  14, -28] as [number, number, number] }, // 6: Tình Huống P2 — orbit XÃ HỘI
+  { pos: [  0,  85, 145] as [number, number, number] }, // 7: Overview — full system
+  { pos: [  0,  55, 105] as [number, number, number] }, // 8: References
 ] as const;
 
-// Peak progress values (used by flyTo)
-export const SECTION_PEAKS = [0.030, 0.200, 0.365, 0.530, 0.700, 0.880] as const;
+// Peak progress values (used by flyTo — nav jumps to first part of each topic)
+export const SECTION_PEAKS = [
+  0.020, // 0: Hero
+  0.130, // 1: Cá Nhân P1
+  0.240, // 2: Cá Nhân P2
+  0.350, // 3: Quần Chúng P1
+  0.460, // 4: Quần Chúng P2
+  0.570, // 5: Tình Huống P1
+  0.680, // 6: Tình Huống P2
+  0.800, // 7: Overview
+  0.920, // 8: References
+] as const;
+
+// Nav-jump targets: each topic points to the FIRST part's peak index
+// (so clicking "Cá nhân & Xã hội" jumps to P1, not P2)
+export const NAV_SECTION_PEAKS: Record<string, number> = {
+  hero:      0,
+  caNhan:    1,
+  quanChung: 3,
+  tinhHuong: 5,
+  overview:  7,
+  references:8,
+};
 
 // Map section index → planet id (null = no planet focus)
 export const SECTION_PLANET_MAP: Record<number, string | null> = {
   0: null,
   1: 'CA_NHAN',
-  2: 'QUAN_CHUNG',
-  3: 'XA_HOI',  // Case Study / Tình huống — uses XÃ HỘI zone camera
-  4: null,
-  5: null,
+  2: 'CA_NHAN',
+  3: 'QUAN_CHUNG',
+  4: 'LANH_TU',
+  5: 'XA_HOI',
+  6: 'XA_HOI',
+  7: null,
+  8: null,
 };
 
 export function getSectionIndex(progress: number): number {
