@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useRef, useMemo, useEffect, useContext } from 'react';
+import React, { useRef, useMemo, useEffect, useContext, useState } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Stars, Text, Sphere } from '@react-three/drei';
+import { Stars, Text, Sphere, PerformanceMonitor } from '@react-three/drei';
 import { EffectComposer, Bloom, Noise, Vignette } from '@react-three/postprocessing';
 import { useMotionValue, useSpring } from 'framer-motion';
 import {
@@ -15,7 +15,7 @@ import {
 } from '../hooks/usePhilosophyScroll';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// THEME
+// THEME & ASSETS
 // ─────────────────────────────────────────────────────────────────────────────
 const THEME = {
   core:       '#FDE047',
@@ -25,6 +25,9 @@ const THEME = {
   orbit:      '#1E3A5F',
   cosmic:     '#64FFDA',
 };
+
+// ĐƯỜNG DẪN ĐẾN FILE FONT TRONG THƯ MỤC PUBLIC
+const DISPLAY_FONT = '/fonts/InstrumentSerif-Regular.ttf';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // GRAVITY CURVE
@@ -57,7 +60,6 @@ const GravityCurve = ({
   }), [color, opacity]);
   const lineObject = useMemo(() => new THREE.Line(geometry, material), [geometry, material]);
 
-  // Keep material opacity in sync with prop
   useFrame(() => {
     if (!sourceRef.current || !targetRef.current || !lineRef.current) return;
     material.opacity = opacity;
@@ -94,7 +96,6 @@ const Satellite = ({
 
   useFrame(({ clock }) => {
     if (!ref.current) return;
-    // Slow orbit when planet is focused (cinematic)
     const targetSpeed = focused ? speed * 0.35 : speed;
     currentSpeed.current += (targetSpeed - currentSpeed.current) * 0.03;
     const t = clock.getElapsedTime();
@@ -114,12 +115,13 @@ const Satellite = ({
         />
       </Sphere>
       <Text
-        position={[0, size + 0.9, 0]}
-        fontSize={size * 1.05}
+        font={DISPLAY_FONT}
+        position={[0, size + 1.0, 0]}
+        fontSize={size * 1.25}
         color={focused ? '#FFFFFF' : '#CBD5E1'}
         anchorX="center"
         anchorY="middle"
-        outlineWidth={0.04}
+        outlineWidth={0.03}
         outlineColor="#000"
       >
         {name}
@@ -129,7 +131,7 @@ const Satellite = ({
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PLANET NODE (focus-aware)
+// PLANET NODE
 // ─────────────────────────────────────────────────────────────────────────────
 interface PlanetData {
   id: string;
@@ -156,7 +158,6 @@ const PlanetNode = ({
   const isFocused      = focusedPlanet === id;
   const isDeemphasized = focusedPlanet !== null && !isFocused;
 
-  // Smooth spring values
   const currentScale    = useRef(1.0);
   const currentEmissive = useRef(1.1);
   const currentOrbitOp  = useRef(0.12);
@@ -164,43 +165,33 @@ const PlanetNode = ({
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
-
     const t = clock.getElapsedTime();
 
-    // Orbit motion
     groupRef.current.position.x = Math.cos(t * speed + angle) * radius;
     groupRef.current.position.z = Math.sin(t * speed + angle) * radius;
 
-    // Base float
     const baseFloat = Math.sin(t * speed * 0.5 + angle) * 3.5;
-
-    // Extra float when focused
     const targetFloat = isFocused ? Math.sin(t * 0.8) * 2.0 : 0;
     floatOffset.current += (targetFloat - floatOffset.current) * 0.04;
     groupRef.current.position.y = baseFloat + floatOffset.current;
 
-    // Scale spring
     const targetScale = isFocused ? 1.65 : isDeemphasized ? 0.82 : 1.0;
     currentScale.current += (targetScale - currentScale.current) * 0.04;
     groupRef.current.scale.setScalar(currentScale.current);
 
-    // Emissive spring
     const targetEmissive = isFocused ? 2.9 : isDeemphasized ? 0.45 : 1.1;
     currentEmissive.current += (targetEmissive - currentEmissive.current) * 0.04;
     if (matRef.current) matRef.current.emissiveIntensity = currentEmissive.current;
 
-    // Orbit ring opacity spring
     const targetOp = isFocused ? 0.32 : isDeemphasized ? 0.04 : 0.12;
     currentOrbitOp.current += (targetOp - currentOrbitOp.current) * 0.04;
     if (ringMatRef.current) ringMatRef.current.opacity = currentOrbitOp.current;
 
-    // Spin the planet itself slowly
     if (meshRef.current) meshRef.current.rotation.y += 0.003;
   });
 
   return (
     <>
-      {/* Orbit ring */}
       <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]}>
         <ringGeometry args={[radius - 0.2, radius + 0.2, 128]} />
         <meshBasicMaterial
@@ -213,7 +204,6 @@ const PlanetNode = ({
       </mesh>
 
       <group ref={groupRef}>
-        {/* Planet sphere */}
         <Sphere ref={meshRef} args={[size, 40, 40]}>
           <meshStandardMaterial
             ref={matRef}
@@ -226,13 +216,13 @@ const PlanetNode = ({
           />
         </Sphere>
 
-        {/* Planet label */}
         <Text
-          position={[0, size + 2.2, 0]}
-          fontSize={size * 0.78}
+          font={DISPLAY_FONT}
+          position={[0, size + 2.5, 0]}
+          fontSize={size * 1.05}
           color={isFocused ? '#FFFFFF' : '#E2E8F0'}
-          letterSpacing={0.12}
-          outlineWidth={0.06}
+          letterSpacing={0.08}
+          outlineWidth={0.05}
           outlineColor="#000"
           anchorX="center"
           anchorY="middle"
@@ -240,13 +230,11 @@ const PlanetNode = ({
           {name}
         </Text>
 
-        {/* Satellites */}
         {satellites.map((sat, i) => (
           <Satellite key={i} {...sat} focused={isFocused} />
         ))}
       </group>
 
-      {/* Gravity curve to core */}
       <GravityCurve
         sourceRef={coreRef}
         targetRef={groupRef}
@@ -310,9 +298,7 @@ const PhilosophicalUniverse = ({ focusedPlanet }: { focusedPlanet: string | null
 
   useFrame(({ clock }) => {
     if (!coreRef.current) return;
-    // Core gentle pulse float
     coreRef.current.position.y = Math.sin(clock.getElapsedTime() * 0.38) * 1.8;
-    // Core emissive boost when no planet focused (overview / hero)
     if (coreMatRef.current) {
       const targetEmissive = focusedPlanet === null ? 3.0 : 2.0;
       coreMatRef.current.emissiveIntensity +=
@@ -322,7 +308,6 @@ const PhilosophicalUniverse = ({ focusedPlanet }: { focusedPlanet: string | null
 
   return (
     <>
-      {/* Central CON NGƯỜI star */}
       <group ref={coreRef}>
         <Sphere args={[3.8, 64, 64]}>
           <meshStandardMaterial
@@ -333,7 +318,6 @@ const PhilosophicalUniverse = ({ focusedPlanet }: { focusedPlanet: string | null
             toneMapped={false}
           />
         </Sphere>
-        {/* Wireframe halo */}
         <Sphere args={[4.6, 28, 28]}>
           <meshBasicMaterial
             color={THEME.core}
@@ -344,11 +328,12 @@ const PhilosophicalUniverse = ({ focusedPlanet }: { focusedPlanet: string | null
           />
         </Sphere>
         <Text
-          position={[0, 6.2, 0]}
-          fontSize={2.2}
+          font={DISPLAY_FONT}
+          position={[0, 6.8, 0]}
+          fontSize={2.8}
           color="#FFF"
-          letterSpacing={0.22}
-          outlineWidth={0.1}
+          letterSpacing={0.15}
+          outlineWidth={0.08}
           outlineColor="#000"
           anchorX="center"
           anchorY="middle"
@@ -357,7 +342,6 @@ const PhilosophicalUniverse = ({ focusedPlanet }: { focusedPlanet: string | null
         </Text>
       </group>
 
-      {/* Planets */}
       {systems.map((sys) => (
         <PlanetNode
           key={sys.id}
@@ -382,14 +366,10 @@ const CinematicCamera = ({
 }) => {
   const { camera } = useThree();
   const { scrollProgress, activeSection } = useContext(PhilosophyScrollContext);
-
-  // Orbit drift state
   const orbitAngle = useRef(0);
 
   useFrame(({ clock }) => {
     const progress = Math.max(0, Math.min(1, scrollProgress));
-
-    // ── Find surrounding waypoints ──────────────────────────────────────────
     let fromIdx = 0;
     let toIdx   = 0;
     let rawT    = 0;
@@ -413,9 +393,7 @@ const CinematicCamera = ({
       rawT    = 1;
     }
 
-    // ── Cinematic easing: exponential ease-out ─────────────────────────────
     const et = cinematicEase(Math.min(rawT, 1));
-
     const from = CAMERA_WAYPOINTS[fromIdx].pos;
     const to   = CAMERA_WAYPOINTS[toIdx].pos;
 
@@ -423,15 +401,12 @@ const CinematicCamera = ({
     let baseY = from[1] + (to[1] - from[1]) * et;
     let baseZ = from[2] + (to[2] - from[2]) * et;
 
-    // ── Slow orbital drift when resting at a planet ────────────────────────
-    // Only drift when section progress is mostly done (rawT > 0.65)
     const driftStrength = Math.max(0, (rawT - 0.65) / 0.35);
     orbitAngle.current += 0.002 * driftStrength;
     const orbitRadius = 6 * driftStrength;
     baseX += Math.sin(orbitAngle.current) * orbitRadius;
     baseZ += Math.cos(orbitAngle.current) * orbitRadius * 0.5;
 
-    // ── Subtle inertial mouse parallax ────────────────────────────────────
     const mx = (latestMouseX.current ?? 0);
     const my = (latestMouseY.current ?? 0);
     const parallaxScale = activeSection === 0 ? 10 : 5;
@@ -439,13 +414,11 @@ const CinematicCamera = ({
     const targetY = baseY - my * (parallaxScale * 0.7);
     const targetZ = baseZ;
 
-    // ── Smooth camera movement (spring-like lerp) ─────────────────────────
     const lerpFactor = 0.042;
     camera.position.x += (targetX - camera.position.x) * lerpFactor;
     camera.position.y += (targetY - camera.position.y) * lerpFactor;
     camera.position.z += (targetZ - camera.position.z) * lerpFactor;
 
-    // ── Look at: center during hero/overview, slightly shifted otherwise ──
     const focusedPlanet = getFocusedPlanet(activeSection);
     const lookAtY = focusedPlanet ? -2 : 0;
     camera.lookAt(0, lookAtY, 0);
@@ -468,6 +441,10 @@ export default function CosmicMindMap() {
   const { activeSection } = useContext(PhilosophyScrollContext);
   const focusedPlanet = getFocusedPlanet(activeSection);
 
+  // Thêm 2 state để quản lý hiệu suất động
+  const [dpr, setDpr] = useState(typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 1.5) : 1);
+  const [enableEffects, setEnableEffects] = useState(true);
+
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       mouseX.set((e.clientX / window.innerWidth)  - 0.5);
@@ -483,7 +460,6 @@ export default function CosmicMindMap() {
     return () => { unsubX(); unsubY(); };
   }, [smoothMouseX, smoothMouseY]);
 
-  const dpr      = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 1.5) : 1;
   const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
 
   return (
@@ -491,7 +467,7 @@ export default function CosmicMindMap() {
       <Canvas
         frameloop="always"
         camera={{ position: [0, 48, 125], fov: 44 }}
-        dpr={[1, dpr]}
+        dpr={dpr} // DPR bây giờ được quản lý động
         gl={{
           antialias: !isMobile,
           powerPreference: 'high-performance',
@@ -499,6 +475,14 @@ export default function CosmicMindMap() {
         }}
         shadows={false}
       >
+        {/* Lắng nghe hiệu suất: Nếu FPS tụt, hạ DPR và tắt hiệu ứng */}
+        <PerformanceMonitor 
+          onDecline={() => {
+            setDpr(1);
+            setEnableEffects(false);
+          }} 
+        />
+
         <color attach="background" args={['#030A14']} />
         <fog attach="fog" args={['#030A14', 55, 200]} />
 
@@ -521,15 +505,18 @@ export default function CosmicMindMap() {
 
         <CinematicCamera latestMouseX={latestMX} latestMouseY={latestMY} />
 
-        <EffectComposer enableNormalPass={false}>
-          <Bloom
-            luminanceThreshold={0.85}
-            mipmapBlur={!isMobile}
-            intensity={isMobile ? 0 : focusedPlanet ? 1.6 : 1.1}
-          />
-          <Noise opacity={0.022} />
-          <Vignette eskil={false} offset={0.15} darkness={1.15} />
-        </EffectComposer>
+        {/* Chỉ bật hậu kỳ (Post-processing) nếu máy đủ khỏe */}
+        {enableEffects && (
+          <EffectComposer enableNormalPass={false}>
+            <Bloom
+              luminanceThreshold={0.85}
+              mipmapBlur={!isMobile}
+              intensity={isMobile ? 0 : focusedPlanet ? 1.6 : 1.1}
+            />
+            <Noise opacity={0.022} />
+            <Vignette eskil={false} offset={0.15} darkness={1.15} />
+          </EffectComposer>
+        )}
       </Canvas>
     </div>
   );
