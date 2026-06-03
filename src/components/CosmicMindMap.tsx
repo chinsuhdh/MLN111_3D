@@ -15,49 +15,41 @@ import {
 } from '../hooks/usePhilosophyScroll';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// THEME & ASSETS
+// THEME & ASSETS - Đã đồng bộ màu sắc 1-1 với Bảng điều khiển 2D
 // ─────────────────────────────────────────────────────────────────────────────
 const THEME = {
-  core:       '#FDE047',
-  social:     '#38BDF8',
-  revolution: '#FB923C',
-  abstract:   '#C084FC',
+  core:       '#FDE047', // CON NGƯỜI
+  social:     '#38BDF8', // XÃ HỘI
+  individual: '#64FFDA', // CÁ NHÂN
+  masses:     '#FB923C', // QUẦN CHÚNG
+  leader:     '#C084FC', // LÃNH TỤ
+  abstract:   '#94A3B8', // Vệ tinh (Màu trung tính)
   orbit:      '#1E3A5F',
-  cosmic:     '#64FFDA',
 };
 
-// ĐƯỜNG DẪN ĐẾN FILE FONT TRONG THƯ MỤC PUBLIC
 const DISPLAY_FONT = '/fonts/InstrumentSerif-Regular.ttf';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// GRAVITY CURVE
-// ─────────────────────────────────────────────────────────────────────────────
-const GravityCurve = ({
-  sourceRef,
-  targetRef,
-  color,
-  tension = 5,
-  opacity = 0.25,
-}: {
-  sourceRef: React.RefObject<THREE.Group | null>;
-  targetRef: React.RefObject<THREE.Group | null>;
-  color: string;
-  tension?: number;
-  opacity?: number;
-}) => {
-  const lineRef = useRef<THREE.Line>(null);
+function mapRefToPlanet(node: string | null) {
+  switch (node) {
+    case 'ca_nhan': return 'CA_NHAN';
+    case 'xa_hoi': return 'XA_HOI';
+    case 'quan_chung': return 'QUAN_CHUNG';
+    case 'lanh_tu': return 'LANH_TU';
+    default: return null; // 'con_nguoi' map tới Core null
+  }
+}
 
+// ─────────────────────────────────────────────────────────────────────────────
+// COMPONENT 3D
+// ─────────────────────────────────────────────────────────────────────────────
+const GravityCurve = ({ sourceRef, targetRef, color, tension = 5, opacity = 0.25 }: any) => {
+  const lineRef = useRef<THREE.Line>(null);
   const vStart   = useMemo(() => new THREE.Vector3(), []);
   const vEnd     = useMemo(() => new THREE.Vector3(), []);
   const vControl = useMemo(() => new THREE.Vector3(), []);
   const curve    = useMemo(() => new THREE.QuadraticBezierCurve3(vStart, vControl, vEnd), [vStart, vControl, vEnd]);
   const geometry = useMemo(() => new THREE.BufferGeometry(), []);
-  const material = useMemo(() => new THREE.LineBasicMaterial({
-    color,
-    transparent: true,
-    opacity,
-    blending: THREE.AdditiveBlending,
-  }), [color, opacity]);
+  const material = useMemo(() => new THREE.LineBasicMaterial({ color, transparent: true, opacity, blending: THREE.AdditiveBlending }), [color, opacity]);
   const lineObject = useMemo(() => new THREE.Line(geometry, material), [geometry, material]);
 
   useFrame(() => {
@@ -76,24 +68,11 @@ const GravityCurve = ({
   return <primitive object={lineObject} ref={lineRef} />;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SATELLITE
-// ─────────────────────────────────────────────────────────────────────────────
-interface SatelliteData {
-  name: string;
-  radius: number;
-  speed: number;
-  angle: number;
-  size: number;
-  color: string;
-}
+interface SatelliteData { name: string; radius: number; speed: number; angle: number; size: number; color: string; }
 
-const Satellite = ({
-  name, radius, speed, angle, size, color, focused,
-}: SatelliteData & { focused: boolean }) => {
+const Satellite = ({ name, radius, speed, angle, size, color, focused }: SatelliteData & { focused: boolean }) => {
   const ref = useRef<THREE.Group>(null);
   const currentSpeed = useRef(speed);
-
   useFrame(({ clock }) => {
     if (!ref.current) return;
     const targetSpeed = focused ? speed * 0.35 : speed;
@@ -103,89 +82,60 @@ const Satellite = ({
     ref.current.position.z = Math.sin(t * currentSpeed.current + angle) * radius;
     ref.current.position.y = Math.sin(t * currentSpeed.current * 3 + angle) * (size * 0.5);
   });
-
   return (
     <group ref={ref}>
       <Sphere args={[size, 16, 16]}>
-        <meshStandardMaterial
-          color={color}
-          emissive={color}
-          emissiveIntensity={focused ? 2.2 : 1.4}
-          toneMapped={false}
-        />
+        <meshStandardMaterial color={color} emissive={color} emissiveIntensity={focused ? 2.2 : 1.4} toneMapped={false} />
       </Sphere>
-      <Text
-        font={DISPLAY_FONT}
-        position={[0, size + 1.0, 0]}
-        fontSize={size * 1.25}
-        color={focused ? '#FFFFFF' : '#CBD5E1'}
-        anchorX="center"
-        anchorY="middle"
-        outlineWidth={0.03}
-        outlineColor="#000"
-      >
-        {name}
-      </Text>
+      <Text font={DISPLAY_FONT} position={[0, size + 1.0, 0]} fontSize={size * 1.25} color={focused ? '#FFFFFF' : '#CBD5E1'} anchorX="center" anchorY="middle" outlineWidth={0.03} outlineColor="#000">{name}</Text>
     </group>
   );
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PLANET NODE
-// ─────────────────────────────────────────────────────────────────────────────
-interface PlanetData {
-  id: string;
-  name: string;
-  radius: number;
-  speed: number;
-  angle: number;
-  size: number;
-  color: string;
-  satellites: SatelliteData[];
-  coreRef: React.RefObject<THREE.Group | null>;
-  focusedPlanet: string | null;
-}
+interface PlanetData { id: string; name: string; defaultRadius: number; speed: number; angle: number; size: number; color: string; satellites: SatelliteData[]; coreRef: React.RefObject<THREE.Group | null>; activePlanetId: string | null; hoveredPlanetId: string | null; referenceInteractionEnabled: boolean; }
 
-const PlanetNode = ({
-  id, name, radius, speed, angle, size, color, satellites, coreRef, focusedPlanet,
-}: PlanetData) => {
+const PlanetNode = ({ id, name, defaultRadius, speed, angle, size, color, satellites, coreRef, activePlanetId, hoveredPlanetId, referenceInteractionEnabled }: PlanetData) => {
   const groupRef  = useRef<THREE.Group>(null);
   const meshRef   = useRef<THREE.Mesh>(null);
   const matRef    = useRef<THREE.MeshStandardMaterial>(null);
   const ringRef   = useRef<THREE.Mesh>(null);
   const ringMatRef = useRef<THREE.MeshBasicMaterial>(null);
 
-  const isFocused      = focusedPlanet === id;
-  const isDeemphasized = focusedPlanet !== null && !isFocused;
-
-  const currentScale    = useRef(1.0);
-  const currentEmissive = useRef(1.1);
-  const currentOrbitOp  = useRef(0.12);
-  const floatOffset     = useRef(0);
+  const isFocused = activePlanetId === id;
+  const isHovered = hoveredPlanetId === id;
+  const isDeemphasized = activePlanetId !== null && !isFocused;
+  const isCurrentCenter = referenceInteractionEnabled && isFocused;
 
   useFrame(({ clock }) => {
     if (!groupRef.current) return;
     const t = clock.getElapsedTime();
 
-    groupRef.current.position.x = Math.cos(t * speed + angle) * radius;
-    groupRef.current.position.z = Math.sin(t * speed + angle) * radius;
+    let targetRadius = defaultRadius;
+    if (referenceInteractionEnabled) {
+      targetRadius = isCurrentCenter ? 0 : defaultRadius * 1.5;
+    }
 
-    const baseFloat = Math.sin(t * speed * 0.5 + angle) * 3.5;
-    const targetFloat = isFocused ? Math.sin(t * 0.8) * 2.0 : 0;
-    floatOffset.current += (targetFloat - floatOffset.current) * 0.04;
-    groupRef.current.position.y = baseFloat + floatOffset.current;
+    const currentRadius = THREE.MathUtils.lerp(
+      Math.sqrt(groupRef.current.position.x ** 2 + groupRef.current.position.z ** 2) || defaultRadius,
+      targetRadius, 0.04
+    );
 
-    const targetScale = isFocused ? 1.65 : isDeemphasized ? 0.82 : 1.0;
-    currentScale.current += (targetScale - currentScale.current) * 0.04;
-    groupRef.current.scale.setScalar(currentScale.current);
+    groupRef.current.position.x = Math.cos(t * speed + angle) * currentRadius;
+    groupRef.current.position.z = Math.sin(t * speed + angle) * currentRadius;
+    groupRef.current.position.y = isCurrentCenter ? 0 : Math.sin(t * speed * 0.5 + angle) * 3.5;
 
-    const targetEmissive = isFocused ? 2.9 : isDeemphasized ? 0.45 : 1.1;
-    currentEmissive.current += (targetEmissive - currentEmissive.current) * 0.04;
-    if (matRef.current) matRef.current.emissiveIntensity = currentEmissive.current;
+    const targetScale = isCurrentCenter ? 2.5 : (isHovered ? 1.3 : isFocused ? 1.65 : isDeemphasized ? 0.82 : 1.0);
+    groupRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), 0.05);
 
-    const targetOp = isFocused ? 0.32 : isDeemphasized ? 0.04 : 0.12;
-    currentOrbitOp.current += (targetOp - currentOrbitOp.current) * 0.04;
-    if (ringMatRef.current) ringMatRef.current.opacity = currentOrbitOp.current;
+    if (matRef.current) {
+      const targetEmissive = isCurrentCenter ? 3.5 : (isHovered ? 3.2 : isFocused ? 2.9 : isDeemphasized ? 0.45 : 1.1);
+      matRef.current.emissiveIntensity = THREE.MathUtils.lerp(matRef.current.emissiveIntensity, targetEmissive, 0.05);
+    }
+    
+    if (ringMatRef.current) {
+      const targetOp = isCurrentCenter ? 0.0 : (isFocused ? 0.32 : isDeemphasized ? 0.04 : 0.12);
+      ringMatRef.current.opacity = THREE.MathUtils.lerp(ringMatRef.current.opacity, targetOp, 0.04);
+    }
 
     if (meshRef.current) meshRef.current.rotation.y += 0.003;
   });
@@ -193,116 +143,59 @@ const PlanetNode = ({
   return (
     <>
       <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]}>
-        <ringGeometry args={[radius - 0.2, radius + 0.2, 128]} />
-        <meshBasicMaterial
-          ref={ringMatRef}
-          color={color}
-          transparent
-          opacity={0.12}
-          side={THREE.DoubleSide}
-        />
+        <ringGeometry args={[defaultRadius - 0.2, defaultRadius + 0.2, 128]} />
+        <meshBasicMaterial ref={ringMatRef} color={color} transparent opacity={0.12} side={THREE.DoubleSide} />
       </mesh>
 
       <group ref={groupRef}>
         <Sphere ref={meshRef} args={[size, 40, 40]}>
-          <meshStandardMaterial
-            ref={matRef}
-            color={color}
-            emissive={color}
-            emissiveIntensity={1.1}
-            toneMapped={false}
-            roughness={0.3}
-            metalness={0.1}
-          />
+          <meshStandardMaterial ref={matRef} color={color} emissive={color} emissiveIntensity={1.1} toneMapped={false} roughness={0.3} metalness={0.1} />
         </Sphere>
-
-        <Text
-          font={DISPLAY_FONT}
-          position={[0, size + 2.5, 0]}
-          fontSize={size * 1.05}
-          color={isFocused ? '#FFFFFF' : '#E2E8F0'}
-          letterSpacing={0.08}
-          outlineWidth={0.05}
-          outlineColor="#000"
-          anchorX="center"
-          anchorY="middle"
-        >
+        <Text font={DISPLAY_FONT} position={[0, size + 2.5, 0]} fontSize={size * 1.05} color={isFocused ? '#FFFFFF' : '#E2E8F0'} letterSpacing={0.08} outlineWidth={0.05} outlineColor="#000" anchorX="center" anchorY="middle">
           {name}
         </Text>
-
         {satellites.map((sat, i) => (
-          <Satellite key={i} {...sat} focused={isFocused} />
+          <Satellite key={i} {...sat} focused={isFocused || isCurrentCenter} />
         ))}
       </group>
-
-      <GravityCurve
-        sourceRef={coreRef}
-        targetRef={groupRef}
-        color={color}
-        tension={7}
-        opacity={isFocused ? 0.5 : isDeemphasized ? 0.08 : 0.22}
-      />
+      
+      {!isCurrentCenter && (
+        <GravityCurve sourceRef={coreRef} targetRef={groupRef} color={color} tension={7} opacity={isFocused || isHovered ? 0.6 : isDeemphasized ? 0.05 : 0.22} />
+      )}
     </>
   );
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// PHILOSOPHICAL UNIVERSE
-// ─────────────────────────────────────────────────────────────────────────────
-const PhilosophicalUniverse = ({ focusedPlanet }: { focusedPlanet: string | null }) => {
+const PhilosophicalUniverse = () => {
+  const { activeSection, referenceActiveNode, referenceHoveredNode, referenceInteractionEnabled } = useContext(PhilosophyScrollContext);
+  
+  const activePlanetId = referenceInteractionEnabled ? mapRefToPlanet(referenceActiveNode) : getFocusedPlanet(activeSection);
+  const hoveredPlanetId = referenceInteractionEnabled ? mapRefToPlanet(referenceHoveredNode) : null;
+
   const coreRef = useRef<THREE.Group>(null);
   const coreMatRef = useRef<THREE.MeshStandardMaterial>(null);
 
   const systems = useMemo(() => [
-    {
-      id: 'CA_NHAN',
-      name: 'CÁ NHÂN',
-      radius: 34, speed: 0.14, angle: 0,
-      size: 2.4, color: THEME.social,
-      satellites: [
-        { name: 'Bản chất loài', radius: 7, speed: 0.9,  angle: 0,         size: 0.75, color: THEME.abstract },
-        { name: 'Tính cá thể',   radius: 7, speed: 0.9,  angle: Math.PI,   size: 0.75, color: THEME.abstract },
-      ],
-    },
-    {
-      id: 'XA_HOI',
-      name: 'XÃ HỘI',
-      radius: 54, speed: 0.09, angle: Math.PI,
-      size: 3.4, color: THEME.social,
-      satellites: [
-        { name: 'Giai cấp',  radius: 9, speed: 0.55, angle: 0,       size: 1.1, color: THEME.abstract },
-        { name: 'Nhà nước',  radius: 9, speed: 0.55, angle: Math.PI, size: 1.1, color: THEME.abstract },
-      ],
-    },
-    {
-      id: 'LANH_TU',
-      name: 'LÃNH TỤ',
-      radius: 24, speed: 0.24, angle: Math.PI / 2,
-      size: 1.9, color: THEME.revolution,
-      satellites: [
-        { name: 'Định hướng', radius: 5.5, speed: 1.3, angle: 0,       size: 0.65, color: THEME.abstract },
-        { name: 'Tổ chức',    radius: 5.5, speed: 1.3, angle: Math.PI, size: 0.65, color: THEME.abstract },
-      ],
-    },
-    {
-      id: 'QUAN_CHUNG',
-      name: 'QUẦN CHÚNG',
-      radius: 44, speed: 0.11, angle: -Math.PI / 2,
-      size: 2.9, color: THEME.revolution,
-      satellites: [
-        { name: 'Lực lượng SX', radius: 8.5, speed: 0.65, angle: 0,       size: 0.95, color: THEME.abstract },
-        { name: 'CM Xã hội',    radius: 8.5, speed: 0.65, angle: Math.PI, size: 0.95, color: THEME.abstract },
-      ],
-    },
+    { id: 'CA_NHAN', name: 'CÁ NHÂN', defaultRadius: 34, speed: 0.14, angle: 0, size: 2.4, color: THEME.individual, satellites: [{ name: 'Bản chất loài', radius: 7, speed: 0.9, angle: 0, size: 0.75, color: THEME.abstract }, { name: 'Tính cá thể', radius: 7, speed: 0.9, angle: Math.PI, size: 0.75, color: THEME.abstract }] },
+    { id: 'XA_HOI', name: 'XÃ HỘI', defaultRadius: 54, speed: 0.09, angle: Math.PI, size: 3.4, color: THEME.social, satellites: [{ name: 'Giai cấp', radius: 9, speed: 0.55, angle: 0, size: 1.1, color: THEME.abstract }, { name: 'Nhà nước', radius: 9, speed: 0.55, angle: Math.PI, size: 1.1, color: THEME.abstract }] },
+    { id: 'LANH_TU', name: 'LÃNH TỤ', defaultRadius: 24, speed: 0.24, angle: Math.PI / 2, size: 1.9, color: THEME.leader, satellites: [{ name: 'Định hướng', radius: 5.5, speed: 1.3, angle: 0, size: 0.65, color: THEME.abstract }, { name: 'Tổ chức', radius: 5.5, speed: 1.3, angle: Math.PI, size: 0.65, color: THEME.abstract }] },
+    { id: 'QUAN_CHUNG', name: 'QUẦN CHÚNG', defaultRadius: 44, speed: 0.11, angle: -Math.PI / 2, size: 2.9, color: THEME.masses, satellites: [{ name: 'Lực lượng SX', radius: 8.5, speed: 0.65, angle: 0, size: 0.95, color: THEME.abstract }, { name: 'CM Xã hội', radius: 8.5, speed: 0.65, angle: Math.PI, size: 0.95, color: THEME.abstract }] },
   ], []);
 
   useFrame(({ clock }) => {
     if (!coreRef.current) return;
-    coreRef.current.position.y = Math.sin(clock.getElapsedTime() * 0.38) * 1.8;
+    const isCoreCenter = !referenceInteractionEnabled || activePlanetId === null;
+    
+    const targetY = isCoreCenter ? Math.sin(clock.getElapsedTime() * 0.38) * 1.8 : 0;
+    const targetX = isCoreCenter ? 0 : Math.cos(clock.getElapsedTime() * 0.1) * 80;
+    const targetZ = isCoreCenter ? 0 : Math.sin(clock.getElapsedTime() * 0.1) * 80;
+
+    coreRef.current.position.lerp(new THREE.Vector3(targetX, targetY, targetZ), 0.05);
+
     if (coreMatRef.current) {
-      const targetEmissive = focusedPlanet === null ? 3.0 : 2.0;
-      coreMatRef.current.emissiveIntensity +=
-        (targetEmissive - coreMatRef.current.emissiveIntensity) * 0.03;
+      const isCoreHovered = hoveredPlanetId === null && referenceHoveredNode === 'con_nguoi';
+      const targetEmissive = isCoreHovered ? 4.0 : (isCoreCenter ? 3.0 : 1.0);
+      coreMatRef.current.emissiveIntensity = THREE.MathUtils.lerp(coreMatRef.current.emissiveIntensity, targetEmissive, 0.05);
     }
   });
 
@@ -310,77 +203,37 @@ const PhilosophicalUniverse = ({ focusedPlanet }: { focusedPlanet: string | null
     <>
       <group ref={coreRef}>
         <Sphere args={[3.8, 64, 64]}>
-          <meshStandardMaterial
-            ref={coreMatRef}
-            color={THEME.core}
-            emissive={THEME.core}
-            emissiveIntensity={2.8}
-            toneMapped={false}
-          />
+          <meshStandardMaterial ref={coreMatRef} color={THEME.core} emissive={THEME.core} toneMapped={false} />
         </Sphere>
         <Sphere args={[4.6, 28, 28]}>
-          <meshBasicMaterial
-            color={THEME.core}
-            transparent
-            opacity={0.14}
-            blending={THREE.AdditiveBlending}
-            wireframe
-          />
+          <meshBasicMaterial color={THEME.core} transparent opacity={0.14} blending={THREE.AdditiveBlending} wireframe />
         </Sphere>
-        <Text
-          font={DISPLAY_FONT}
-          position={[0, 6.8, 0]}
-          fontSize={2.8}
-          color="#FFF"
-          letterSpacing={0.15}
-          outlineWidth={0.08}
-          outlineColor="#000"
-          anchorX="center"
-          anchorY="middle"
-        >
+        <Text font={DISPLAY_FONT} position={[0, 6.8, 0]} fontSize={2.8} color="#FFF" letterSpacing={0.15} outlineWidth={0.08} outlineColor="#000" anchorX="center" anchorY="middle">
           CON NGƯỜI
         </Text>
       </group>
 
       {systems.map((sys) => (
-        <PlanetNode
-          key={sys.id}
-          {...sys}
-          coreRef={coreRef as React.RefObject<THREE.Group | null>}
-          focusedPlanet={focusedPlanet}
-        />
+        <PlanetNode key={sys.id} {...sys} coreRef={coreRef as React.RefObject<THREE.Group | null>} activePlanetId={activePlanetId} hoveredPlanetId={hoveredPlanetId} referenceInteractionEnabled={referenceInteractionEnabled} />
       ))}
     </>
   );
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CINEMATIC CAMERA CONTROLLER
-// ─────────────────────────────────────────────────────────────────────────────
-const CinematicCamera = ({
-  latestMouseX,
-  latestMouseY,
-}: {
-  latestMouseX: React.RefObject<number>;
-  latestMouseY: React.RefObject<number>;
-}) => {
+const CinematicCamera = ({ latestMouseX, latestMouseY }: { latestMouseX: React.RefObject<number>; latestMouseY: React.RefObject<number>; }) => {
   const { camera } = useThree();
   const { scrollProgress, activeSection } = useContext(PhilosophyScrollContext);
   const orbitAngle = useRef(0);
 
   useFrame(({ clock }) => {
     const progress = Math.max(0, Math.min(1, scrollProgress));
-    let fromIdx = 0;
-    let toIdx   = 0;
-    let rawT    = 0;
+    let fromIdx = 0, toIdx = 0, rawT = 0;
 
     for (let i = 0; i < SECTION_BOUNDS.length - 1; i++) {
       const currentPeak = SECTION_BOUNDS[i].peak;
       const nextPeak    = SECTION_BOUNDS[i + 1].peak;
       if (progress >= currentPeak && progress <= nextPeak) {
-        fromIdx = i;
-        toIdx   = i + 1;
-        rawT    = (progress - currentPeak) / (nextPeak - currentPeak);
+        fromIdx = i; toIdx = i + 1; rawT = (progress - currentPeak) / (nextPeak - currentPeak);
         break;
       }
     }
@@ -388,9 +241,7 @@ const CinematicCamera = ({
     if (progress < SECTION_BOUNDS[0].peak) {
       fromIdx = 0; toIdx = 0; rawT = 0;
     } else if (progress > SECTION_BOUNDS[SECTION_BOUNDS.length - 1].peak) {
-      fromIdx = SECTION_BOUNDS.length - 1;
-      toIdx   = SECTION_BOUNDS.length - 1;
-      rawT    = 1;
+      fromIdx = SECTION_BOUNDS.length - 1; toIdx = SECTION_BOUNDS.length - 1; rawT = 1;
     }
 
     const et = cinematicEase(Math.min(rawT, 1));
@@ -419,17 +270,11 @@ const CinematicCamera = ({
     camera.position.y += (targetY - camera.position.y) * lerpFactor;
     camera.position.z += (targetZ - camera.position.z) * lerpFactor;
 
-    const focusedPlanet = getFocusedPlanet(activeSection);
-    const lookAtY = focusedPlanet ? -2 : 0;
-    camera.lookAt(0, lookAtY, 0);
+    camera.lookAt(0, 0, 0);
   });
-
   return null;
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// MAIN EXPORT
-// ─────────────────────────────────────────────────────────────────────────────
 export default function CosmicMindMap() {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -438,10 +283,6 @@ export default function CosmicMindMap() {
   const latestMX = useRef(0);
   const latestMY = useRef(0);
 
-  const { activeSection } = useContext(PhilosophyScrollContext);
-  const focusedPlanet = getFocusedPlanet(activeSection);
-
-  // Thêm 2 state để quản lý hiệu suất động
   const [dpr, setDpr] = useState(typeof window !== 'undefined' ? Math.min(window.devicePixelRatio, 1.5) : 1);
   const [enableEffects, setEnableEffects] = useState(true);
 
@@ -467,52 +308,27 @@ export default function CosmicMindMap() {
       <Canvas
         frameloop="always"
         camera={{ position: [0, 48, 125], fov: 44 }}
-        dpr={dpr} // DPR bây giờ được quản lý động
-        gl={{
-          antialias: !isMobile,
-          powerPreference: 'high-performance',
-          alpha: false,
-        }}
+        dpr={dpr}
+        gl={{ antialias: !isMobile, powerPreference: 'high-performance', alpha: false }}
         shadows={false}
       >
-        {/* Lắng nghe hiệu suất: Nếu FPS tụt, hạ DPR và tắt hiệu ứng */}
-        <PerformanceMonitor 
-          onDecline={() => {
-            setDpr(1);
-            setEnableEffects(false);
-          }} 
-        />
-
+        <PerformanceMonitor onDecline={() => { setDpr(1); setEnableEffects(false); }} />
         <color attach="background" args={['#030A14']} />
         <fog attach="fog" args={['#030A14', 55, 200]} />
-
+        
         <ambientLight intensity={0.22} />
-        <pointLight position={[0, 0, 0]}    intensity={130} distance={120} color={THEME.core} />
-        <pointLight position={[30, 20, 30]} intensity={22}  color={THEME.social} />
-        <pointLight position={[-30, -10, 20]} intensity={18} color={THEME.revolution} />
-
-        <Stars
-          radius={130}
-          depth={65}
-          count={isMobile ? 1200 : 2800}
-          factor={4}
-          saturation={0.1}
-          fade
-          speed={0.5}
-        />
-
-        <PhilosophicalUniverse focusedPlanet={focusedPlanet} />
-
+        <pointLight position={[0, 0, 0]} intensity={130} distance={120} color={THEME.core} />
+        <pointLight position={[30, 20, 30]} intensity={22} color={THEME.social} />
+        <pointLight position={[-30, -10, 20]} intensity={18} color={THEME.masses} />
+        
+        <Stars radius={130} depth={65} count={isMobile ? 1200 : 2800} factor={4} saturation={0.1} fade speed={0.5} />
+        
+        <PhilosophicalUniverse />
         <CinematicCamera latestMouseX={latestMX} latestMouseY={latestMY} />
 
-        {/* Chỉ bật hậu kỳ (Post-processing) nếu máy đủ khỏe */}
         {enableEffects && (
           <EffectComposer enableNormalPass={false}>
-            <Bloom
-              luminanceThreshold={0.85}
-              mipmapBlur={!isMobile}
-              intensity={isMobile ? 0 : focusedPlanet ? 1.6 : 1.1}
-            />
+            <Bloom luminanceThreshold={0.85} mipmapBlur={!isMobile} intensity={1.1} />
             <Noise opacity={0.022} />
             <Vignette eskil={false} offset={0.15} darkness={1.15} />
           </EffectComposer>

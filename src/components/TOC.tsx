@@ -1,15 +1,22 @@
+'use client';
+
 import { useState, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { List, X, ChevronRight } from 'lucide-react';
 import { PhilosophyScrollContext } from '../hooks/usePhilosophyScroll';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Cấu hình Mục lục: idx để click bay tới đúng phần, activeGroup để sáng đèn
+// Đã đồng bộ hoàn toàn với cấu trúc SECTION_BOUNDS mới nhất
+// ─────────────────────────────────────────────────────────────────────────────
 const TOC_SECTIONS = [
-  { idx: 0, label: 'Giới thiệu',            num: '00', icon: '✦' },
-  { idx: 1, label: 'Cá nhân & Xã hội',    num: '01', icon: '◎' },
-  { idx: 2, label: 'Quần chúng & Lãnh tụ', num: '02', icon: '◉' },
-  { idx: 3, label: 'Tình huống',             num: '03', icon: '◈' },
-  { idx: 4, label: 'Tổng quan',              num: '04', icon: '✺' },
-  { idx: 5, label: 'Tài liệu',              num: '05', icon: '◆' },
+  { idx: 0,  label: 'Giới thiệu',           num: '00', icon: '✦', activeGroup: [0] },
+  { idx: 1,  label: 'Cá nhân & Xã hội',     num: '01', icon: '◎', activeGroup: [1, 2] },
+  { idx: 3,  label: 'Quần chúng & Lãnh tụ', num: '02', icon: '◉', activeGroup: [3, 4] },
+  { idx: 5,  label: 'Tình huống',           num: '03', icon: '◈', activeGroup: [5, 6] },
+  { idx: 7,  label: 'Thực tiễn VN',         num: '04', icon: '★', activeGroup: [7, 8] },
+  { idx: 9,  label: 'Tổng quan',            num: '05', icon: '✺', activeGroup: [9] },
+  { idx: 10, label: 'Tài liệu',             num: '06', icon: '◆', activeGroup: [10] },
 ];
 
 export default function TOC() {
@@ -28,8 +35,10 @@ export default function TOC() {
         className="hidden xl:flex flex-col fixed left-5 2xl:left-8 top-1/2 -translate-y-1/2 z-40 gap-3"
         aria-label="Mục lục vũ trụ"
       >
-        {TOC_SECTIONS.map(({ idx, label, num, icon }) => {
-          const isActive = activeSection === idx;
+        {TOC_SECTIONS.map(({ idx, label, num, icon, activeGroup }) => {
+          // Kiểm tra xem section hiện tại có nằm trong nhóm sáng đèn không
+          const isActive = activeGroup.includes(activeSection);
+          
           return (
             <button
               key={idx}
@@ -39,7 +48,7 @@ export default function TOC() {
                 isActive ? 'opacity-100' : 'opacity-30 hover:opacity-70'
               }`}
             >
-              {/* Waypoint indicator */}
+              {/* Waypoint indicator (Nút chấm nhỏ) */}
               <div className="relative flex-shrink-0">
                 <motion.div
                   animate={{
@@ -60,7 +69,7 @@ export default function TOC() {
                   {isActive ? <span className="text-[10px]">{icon}</span> : <span className="text-[9px]">{num}</span>}
                 </motion.div>
 
-                {/* Active pulse ring */}
+                {/* Vòng pulse tỏa ra khi Active */}
                 {isActive && (
                   <motion.div
                     className="absolute inset-0 rounded-xl"
@@ -71,7 +80,7 @@ export default function TOC() {
                 )}
               </div>
 
-              {/* Label — slides in on hover or when active */}
+              {/* Tên Label — Hiện lên khi Hover hoặc khi Active */}
               <motion.span
                 animate={{
                   opacity: isActive ? 1 : 0,
@@ -90,7 +99,7 @@ export default function TOC() {
                 {label}
               </motion.span>
 
-              {/* Hover label (shown when not active) */}
+              {/* Hover label (Chỉ hiện khi chưa Active) */}
               {!isActive && (
                 <span
                   className="text-[11px] font-semibold whitespace-nowrap px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-1 group-hover:translate-x-0"
@@ -108,7 +117,7 @@ export default function TOC() {
           );
         })}
 
-        {/* Vertical connector line */}
+        {/* Trục kẻ dọc (Vertical connector line) */}
         <div
           className="absolute left-[14px] top-4 bottom-4 w-px pointer-events-none"
           style={{ background: 'linear-gradient(to bottom, transparent, rgba(100,255,218,0.15), transparent)' }}
@@ -154,7 +163,7 @@ export default function TOC() {
           </AnimatePresence>
         </motion.button>
 
-        {/* Mobile dropdown */}
+        {/* Mobile dropdown Menu */}
         <AnimatePresence>
           {mobileOpen && (
             <motion.div
@@ -176,8 +185,8 @@ export default function TOC() {
                 </p>
               </div>
               <div className="p-2">
-                {TOC_SECTIONS.map(({ idx, label, num, icon }) => {
-                  const isActive = activeSection === idx;
+                {TOC_SECTIONS.map(({ idx, label, num, icon, activeGroup }) => {
+                  const isActive = activeGroup.includes(activeSection);
                   return (
                     <button
                       key={idx}

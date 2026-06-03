@@ -1,11 +1,22 @@
 import { createContext, useContext, RefObject } from 'react';
 
+export type ReferenceNodeId = 'con_nguoi' | 'xa_hoi' | 'ca_nhan' | 'quan_chung' | 'lanh_tu'| 'hoat_dong_thuc_tien' // Thêm dòng này
+  | 'lich_su';
+
 export interface PhilosophyScrollState {
   scrollProgress: number;
   activeSection: number;
   focusedPlanet: string | null;
   flyTo: (sectionIndex: number) => void;
   scrollContainerRef: RefObject<HTMLDivElement>;
+  
+  // --- STATE ĐIỀU KHIỂN BẢN ĐỒ TRIẾT HỌC (SECTION 10) ---
+  referenceActiveNode: ReferenceNodeId;
+  setReferenceActiveNode: (id: ReferenceNodeId) => void;
+  referenceHoveredNode: ReferenceNodeId | null;
+  setReferenceHoveredNode: (id: ReferenceNodeId | null) => void;
+  referenceInteractionEnabled: boolean;
+  setReferenceInteractionEnabled: (enabled: boolean) => void;
 }
 
 export const PhilosophyScrollContext = createContext<PhilosophyScrollState>({
@@ -14,81 +25,61 @@ export const PhilosophyScrollContext = createContext<PhilosophyScrollState>({
   focusedPlanet: null,
   flyTo: () => {},
   scrollContainerRef: { current: null },
+  
+  referenceActiveNode: 'con_nguoi',
+  setReferenceActiveNode: () => {},
+  referenceHoveredNode: null,
+  setReferenceHoveredNode: () => {},
+  referenceInteractionEnabled: false,
+  setReferenceInteractionEnabled: () => {},
 });
 
 export const usePhilosophyScroll = () => useContext(PhilosophyScrollContext);
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SECTION MAP (9 sections = 9 scroll pages)
-//
-//  0  Hero
-//  1  Cá Nhân – P1   (Right)  Camera: approaching CÁ NHÂN
-//  2  Cá Nhân – P2   (Right)  Camera: slow orbit around CÁ NHÂN
-//  3  Quần Chúng – P1 (Left)  Camera: approaching QUẦN CHÚNG
-//  4  Quần Chúng – P2 (Left)  Camera: orbit QUẦN CHÚNG → LÃNH TỤ
-//  5  Tình Huống – P1 (Right) Camera: approaching XÃ HỘI
-//  6  Tình Huống – P2 (Right) Camera: orbit XÃ HỘI
-//  7  Overview        (Left)  Camera: full system pullback
-//  8  References      (Left)  Camera: gentle retreat
-// ─────────────────────────────────────────────────────────────────────────────
-export const TOTAL_PAGES = 9;
+export const TOTAL_PAGES = 11;
 
-// Each band: start → peak (fully visible) → exit (fade starts) → end
-// 9 sections, each occupying ~1/9 of scroll space (≈ 0.111 each)
 export const SECTION_BOUNDS = [
-  { start: 0.000, peak: 0.020, exit: 0.085, end: 0.111 }, // 0: Hero
-  { start: 0.085, peak: 0.130, exit: 0.195, end: 0.222 }, // 1: Cá Nhân P1
-  { start: 0.195, peak: 0.240, exit: 0.305, end: 0.333 }, // 2: Cá Nhân P2
-  { start: 0.305, peak: 0.350, exit: 0.415, end: 0.444 }, // 3: Quần Chúng P1
-  { start: 0.415, peak: 0.460, exit: 0.525, end: 0.555 }, // 4: Quần Chúng P2
-  { start: 0.525, peak: 0.570, exit: 0.635, end: 0.666 }, // 5: Tình Huống P1
-  { start: 0.635, peak: 0.680, exit: 0.745, end: 0.777 }, // 6: Tình Huống P2
-  { start: 0.745, peak: 0.800, exit: 0.878, end: 0.900 }, // 7: Overview
-  { start: 0.878, peak: 0.920, exit: 0.975, end: 1.000 }, // 8: References
+  { start: 0.000, peak: 0.020, exit: 0.070, end: 0.090 }, // 0: Hero
+  { start: 0.090, peak: 0.110, exit: 0.160, end: 0.181 }, // 1: Cá Nhân P1
+  { start: 0.181, peak: 0.200, exit: 0.250, end: 0.272 }, // 2: Cá Nhân P2
+  { start: 0.272, peak: 0.290, exit: 0.340, end: 0.363 }, // 3: Quần Chúng P1
+  { start: 0.363, peak: 0.380, exit: 0.430, end: 0.454 }, // 4: Quần Chúng P2
+  { start: 0.454, peak: 0.470, exit: 0.520, end: 0.545 }, // 5: Tình Huống P1
+  { start: 0.545, peak: 0.565, exit: 0.615, end: 0.636 }, // 6: Tình Huống P2
+  { start: 0.636, peak: 0.655, exit: 0.705, end: 0.727 }, // 7: Việt Nam P1
+  { start: 0.727, peak: 0.745, exit: 0.795, end: 0.818 }, // 8: Việt Nam P2
+  { start: 0.818, peak: 0.840, exit: 0.890, end: 0.909 }, // 9: Overview
+  { start: 0.909, peak: 0.930, exit: 0.980, end: 1.000 }, // 10: References
 ] as const;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// CAMERA WAYPOINTS
-// Part-2 waypoints are subtle orbits of the same planet — same zone but
-// shifted angle/distance so the audience feels movement without disorientation.
-// ─────────────────────────────────────────────────────────────────────────────
 export const CAMERA_WAYPOINTS = [
-  { pos: [  0,  48, 125] as [number, number, number] }, // 0: Hero — wide overview
-  { pos: [ 30,  12,  42] as [number, number, number] }, // 1: Cá Nhân P1 — direct approach
-  { pos: [ 22,   6,  36] as [number, number, number] }, // 2: Cá Nhân P2 — orbit right+closer
-  { pos: [-20,  -8,  28] as [number, number, number] }, // 3: Quần Chúng P1 — approach
-  { pos: [-28,   4,  22] as [number, number, number] }, // 4: Quần Chúng P2 — drift toward Lãnh Tụ
-  { pos: [-48,   8, -34] as [number, number, number] }, // 5: Tình Huống P1 — approach XÃ HỘI
-  { pos: [-40,  14, -28] as [number, number, number] }, // 6: Tình Huống P2 — orbit XÃ HỘI
-  { pos: [  0,  85, 145] as [number, number, number] }, // 7: Overview — full system
-  { pos: [  0,  55, 105] as [number, number, number] }, // 8: References
+  { pos: [  0,  48, 125] as [number, number, number] }, // 0: Hero (Chính giữa)
+  { pos: [-35,  65, 130] as [number, number, number] }, // 1: Overview (Camera lùi trái -> 3D dạt sang phải, né chữ)
+  { pos: [ 30,  12,  42] as [number, number, number] }, // 2: Cá Nhân P1 
+  { pos: [ 22,   6,  36] as [number, number, number] }, // 3: Cá Nhân P2 
+  { pos: [-20,  -8,  28] as [number, number, number] }, // 4: Quần Chúng P1 
+  { pos: [-28,   4,  22] as [number, number, number] }, // 5: Quần Chúng P2 
+  { pos: [-48,   8, -34] as [number, number, number] }, // 6: Tình Huống P1 
+  { pos: [-40,  14, -28] as [number, number, number] }, // 7: Tình Huống P2 
+  { pos: [-25,  25,  75] as [number, number, number] }, // 8: Việt Nam P1 (Camera lùi trái -> 3D dạt sang phải)
+  { pos: [-15,  20,  60] as [number, number, number] }, // 9: Việt Nam P2 
+  { pos: [  0,  40, 110] as [number, number, number] }, // 10: References (Trở lại chính giữa để user tương tác)
 ] as const;
 
-// Peak progress values (used by flyTo — nav jumps to first part of each topic)
 export const SECTION_PEAKS = [
-  0.020, // 0: Hero
-  0.130, // 1: Cá Nhân P1
-  0.240, // 2: Cá Nhân P2
-  0.350, // 3: Quần Chúng P1
-  0.460, // 4: Quần Chúng P2
-  0.570, // 5: Tình Huống P1
-  0.680, // 6: Tình Huống P2
-  0.800, // 7: Overview
-  0.920, // 8: References
+  0.020, 0.110, 0.200, 0.290, 0.380, 0.470, 0.565, 0.655, 0.745, 0.840, 0.930,
 ] as const;
 
-// Nav-jump targets: each topic points to the FIRST part's peak index
-// (so clicking "Cá nhân & Xã hội" jumps to P1, not P2)
 export const NAV_SECTION_PEAKS: Record<string, number> = {
   hero:      0,
   caNhan:    1,
   quanChung: 3,
   tinhHuong: 5,
-  overview:  7,
-  references:8,
+  vietNam:   7,
+  overview:  9,
+  references:10,
 };
 
-// Map section index → planet id (null = no planet focus)
 export const SECTION_PLANET_MAP: Record<number, string | null> = {
   0: null,
   1: 'CA_NHAN',
@@ -99,6 +90,8 @@ export const SECTION_PLANET_MAP: Record<number, string | null> = {
   6: 'XA_HOI',
   7: null,
   8: null,
+  9: null,
+  10: null,
 };
 
 export function getSectionIndex(progress: number): number {
@@ -124,7 +117,6 @@ export function lerpCameraPos(
   ];
 }
 
-// Cinematic easing: exponential ease-out — fast approach, slow arrival
 export function cinematicEase(t: number): number {
   return t === 0 ? 0 : 1 - Math.pow(2, -10 * t);
 }
