@@ -26,7 +26,7 @@ function ScrollProgressBar({ progress }: { progress: number }) {
 }
 
 const NAV_LINKS = [
-  { sectionIdx: 0, label: 'Giới thiệu',             activeGroup: [0] },
+  { sectionIdx: 0, label: 'Giới thiệu',            activeGroup: [0] },
   { sectionIdx: 1, label: 'Cá nhân & Xã hội',       activeGroup: [1, 2] },
   { sectionIdx: 3, label: 'Quần chúng & Lãnh tụ',   activeGroup: [3, 4] },
   { sectionIdx: 5, label: 'Tình huống',             activeGroup: [5, 6] },
@@ -92,6 +92,9 @@ export default function Layout({ children }: { children: ReactNode }) {
   const [referenceHoveredNode, setReferenceHoveredNode] = useState<ReferenceNodeId | null>(null);
   const [referenceInteractionEnabled, setReferenceInteractionEnabled] = useState(false);
 
+  // --- SỬA LỖI Ở ĐÂY: KHỞI TẠO STATE CHO ARCHIVE MODAL ---
+  const [isArchiveOpen, setIsArchiveOpen] = useState(false);
+
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
@@ -116,6 +119,7 @@ export default function Layout({ children }: { children: ReactNode }) {
 
   const focusedPlanet = getFocusedPlanet(activeSection);
 
+  // --- SỬA LỖI Ở ĐÂY: TRUYỀN THÊM IS_ARCHIVE_OPEN VÀO scrollState ---
   const scrollState: PhilosophyScrollState = {
     scrollProgress,
     activeSection,
@@ -129,6 +133,9 @@ export default function Layout({ children }: { children: ReactNode }) {
     setReferenceHoveredNode,
     referenceInteractionEnabled,
     setReferenceInteractionEnabled,
+    // Cấp phát state cho Archive Modal
+    isArchiveOpen,
+    setIsArchiveOpen,
   };
 
   return (

@@ -1,7 +1,6 @@
 import { createContext, useContext, RefObject } from 'react';
 
-export type ReferenceNodeId = 'con_nguoi' | 'xa_hoi' | 'ca_nhan' | 'quan_chung' | 'lanh_tu'| 'hoat_dong_thuc_tien' // Thêm dòng này
-  | 'lich_su';
+export type ReferenceNodeId = 'con_nguoi' | 'xa_hoi' | 'ca_nhan' | 'quan_chung' | 'lanh_tu' | 'hoat_dong_thuc_tien' | 'lich_su';
 
 export interface PhilosophyScrollState {
   scrollProgress: number;
@@ -17,6 +16,10 @@ export interface PhilosophyScrollState {
   setReferenceHoveredNode: (id: ReferenceNodeId | null) => void;
   referenceInteractionEnabled: boolean;
   setReferenceInteractionEnabled: (enabled: boolean) => void;
+
+  // --- STATE ĐIỀU KHIỂN KHO LƯU TRỮ (THÊM MỚI) ---
+  isArchiveOpen: boolean;
+  setIsArchiveOpen: (isOpen: boolean) => void;
 }
 
 export const PhilosophyScrollContext = createContext<PhilosophyScrollState>({
@@ -32,6 +35,10 @@ export const PhilosophyScrollContext = createContext<PhilosophyScrollState>({
   setReferenceHoveredNode: () => {},
   referenceInteractionEnabled: false,
   setReferenceInteractionEnabled: () => {},
+
+  // --- DEFAULT STATE KHO LƯU TRỮ (THÊM MỚI) ---
+  isArchiveOpen: false,
+  setIsArchiveOpen: () => {},
 });
 
 export const usePhilosophyScroll = () => useContext(PhilosophyScrollContext);

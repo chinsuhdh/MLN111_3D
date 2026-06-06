@@ -57,7 +57,6 @@ function useIsMobile() {
   return isMobile;
 }
 
-// Cập nhật lại logic Trái/Phải theo index mới
 function isRightSide(sectionIdx: number): boolean {
   return sectionIdx === 2 || sectionIdx === 3 || sectionIdx === 6 || sectionIdx === 7;
 }
@@ -276,7 +275,7 @@ export function PlanetTheoryHUD({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// CÁC SECTION NỘI DUNG (Đã lùi index từ 2 -> 9)
+// CÁC SECTION NỘI DUNG
 // ─────────────────────────────────────────────────────────────────────────────
 
 function SectionCaNhanP1() {
@@ -315,22 +314,44 @@ function SectionCaNhanP2() {
       title="Cá Nhân & Xã Hội"
       eyebrow="Phần 01 · Tiếp theo"
       accentColor="#64FFDA"
-      subtitle="Tính giai cấp, tính nhân loại & Ý nghĩa phương pháp luận"
+      subtitle="Tính giai cấp, tính dân tộc & tính nhân loại"
       coords={{ lat: '21.0°N', lon: '106.2°E', alt: '31 AU' }}
       blocks={[
         {
           type: 'heading',
           label: 'Cấu trúc bản chất',
-          text: 'Tính giai cấp & Tính nhân loại',
+          text: 'Cá nhân · Giai cấp · Dân tộc · Nhân loại',
         },
         {
           type: 'body',
-          html: 'Trong xã hội có giai cấp, mỗi con người vừa mang <strong>tính nhân loại</strong> (những giá trị chung vĩnh hằng, nền tảng cuộc sống) vừa mang <strong>tính giai cấp</strong> (bị chi phối bởi lợi ích của giai cấp mình thuộc về). Sự thống nhất biện chứng giữa các đặc tính này là động lực của tiến bộ xã hội.',
+          html: `
+            Trong xã hội có giai cấp, mỗi con người không chỉ mang
+            <strong> tính cá nhân </strong>
+            mà còn đồng thời mang
+            <strong> tính giai cấp </strong>,
+            <strong> tính dân tộc </strong>
+            và
+            <strong> tính nhân loại </strong>.
+            Tính nhân loại phản ánh những giá trị chung của loài người,
+            còn tính giai cấp và tính dân tộc mang dấu ấn của hoàn cảnh
+            lịch sử - xã hội cụ thể mà con người đang sống.
+          `,
         },
         {
           type: 'highlight',
           label: '◉ Ý nghĩa phương pháp luận',
-          html: 'Khi nhìn nhận con người, phải đặt họ trong bối cảnh lịch sử và tổng thể các mối quan hệ xã hội. Phải tránh hai thái cực sai lầm: <strong>Đề cao cá nhân quá mức</strong> (dẫn đến vị kỷ, chủ nghĩa cá nhân) hoặc <strong>tuyệt đối hóa xã hội</strong> (vùi dập cá tính cá nhân).',
+          html: `
+            Khi xem xét con người phải đặt họ trong
+            <strong> bối cảnh lịch sử cụ thể </strong>
+            và trong
+            <strong> tổng thể các quan hệ xã hội </strong>.
+            Cần tránh hai khuynh hướng cực đoan:
+            <strong> đề cao cá nhân quá mức </strong>
+            dẫn đến chủ nghĩa cá nhân,
+            hoặc
+            <strong> tuyệt đối hóa xã hội </strong>
+            làm lu mờ vai trò và giá trị của cá nhân.
+          `,
         },
       ]}
     />
@@ -376,7 +397,7 @@ function SectionQuanChungP2() {
       title="Quần Chúng & Lãnh Tụ"
       eyebrow="Phần 02 · Tiếp theo"
       accentColor="#D4A373"
-      subtitle="Vai trò của cá nhân kiệt xuất và bài học hệ quả"
+      subtitle="Vai trò của cá nhân kiệt xuất và quan hệ biện chứng"
       coords={{ lat: '16.0°N', lon: '107.9°E', alt: '40 AU' }}
       blocks={[
         {
@@ -386,7 +407,15 @@ function SectionQuanChungP2() {
         },
         {
           type: 'body',
-          html: 'Lãnh tụ là những cá nhân kiệt xuất sinh ra từ phong trào quần chúng, có khả năng nhận thức đúng đắn quy luật khách quan của thời đại, từ đó tập hợp, tổ chức, dẫn dắt phong trào đạt được mục tiêu chung.',
+          html: `
+            Lãnh tụ là những cá nhân kiệt xuất xuất hiện từ phong trào
+            quần chúng nhân dân, có khả năng nhận thức đúng đắn các quy luật
+            khách quan của đời sống xã hội, hiểu được yêu cầu của thời đại
+            và tổ chức quần chúng thực hiện những mục tiêu lịch sử đặt ra.
+
+            Lãnh tụ chân chính không tách rời quần chúng mà luôn gắn bó,
+            đại diện và phục vụ lợi ích của quần chúng nhân dân.
+          `,
         },
         {
           type: 'quote',
@@ -396,7 +425,18 @@ function SectionQuanChungP2() {
         {
           type: 'highlight',
           label: '⇄ Quan hệ biện chứng',
-          html: 'Mục đích và lợi ích của quần chúng và lãnh tụ là thống nhất. Quần chúng tạo ra phong trào và sinh ra lãnh tụ, còn lãnh tụ dẫn dắt phong trào đi đến thành công. Tuyệt đối hóa lãnh tụ dẫn đến <strong>sùng bái cá nhân</strong>, tuyệt đối hóa quần chúng sẽ dẫn đến <strong>vô tổ chức, xem nhẹ sáng kiến vĩ đại</strong>.',
+          html: `
+            Mục đích và lợi ích của quần chúng nhân dân và lãnh tụ là thống nhất.
+            Quần chúng là lực lượng sáng tạo lịch sử, tạo nên phong trào và là
+            cơ sở xuất hiện các lãnh tụ. Ngược lại, lãnh tụ có vai trò định hướng,
+            tổ chức và dẫn dắt phong trào phát triển.
+
+            Tuyệt đối hóa lãnh tụ sẽ dẫn đến
+            <strong> sùng bái cá nhân </strong>,
+            còn tuyệt đối hóa quần chúng sẽ dẫn đến
+            <strong> xem nhẹ vai trò của cá nhân và lãnh tụ </strong>,
+            làm hạn chế khả năng phát huy những sáng kiến và đóng góp nổi bật.
+          `,
         },
       ]}
     />
@@ -420,18 +460,30 @@ function SectionCaseStudyP1() {
         },
         {
           type: 'body',
-          html: 'Trong chiến dịch tình nguyện lớn của một CLB sinh viên, Trưởng nhóm C là người nổi tiếng, được xem là "linh hồn" chương trình nhưng lại tự ý quyết định mọi việc vì tin mình có tầm nhìn tốt hơn. Khi chiến dịch gặp sự cố thiếu kinh phí và tổ chức kém, C đổ lỗi cho đội ngũ, còn thành viên cho rằng C độc đoán.',
+          html: `            Trong chiến dịch tình nguyện lớn của một CLB sinh viên,
+            Trưởng nhóm C là người nổi tiếng, được xem là "linh hồn"
+            của chương trình nhưng lại tự ý quyết định mọi việc vì tin
+            rằng mình có tầm nhìn tốt hơn những người khác.
+            Khi chiến dịch gặp sự cố về kinh phí và tổ chức,
+            C đổ lỗi cho đội ngũ, trong khi các thành viên cho rằng
+            C quá độc đoán và không lắng nghe tập thể.
+          `,
         },
         {
           type: 'highlight',
           label: '⇄ Lỗi tuyệt đối hóa cá nhân',
-          html: 'C đã mắc sai lầm nghiêm trọng khi <strong>tuyệt đối hóa vai trò cá nhân</strong>, đặt mình lên trên tập thể. Triết học Mác - Lênin chỉ rõ: Nếu tách rời cá nhân khỏi quan hệ xã hội, đem cá nhân đối lập với tập thể sẽ dẫn đến hệ lụy thất bại khó lường.',
+          html: `            C đã mắc sai lầm khi             <strong> đề cao vai trò cá nhân một cách cực đoan </strong>,
+            đặt quyết định của bản thân lên trên ý kiến tập thể.
+            Theo triết học Mác - Lênin, cá nhân không thể tách rời
+            khỏi các quan hệ xã hội. Khi đem cá nhân đối lập với tập thể,
+            sức mạnh chung sẽ bị suy giảm và dễ dẫn đến thất bại.
+          `,
         },
         {
           type: 'bullet-list',
           items: [
-            '<strong>Triệt tiêu động lực tập thể:</strong> Các thành viên CLB là chủ thể trực tiếp đóng góp công sức, vận hành chiến dịch. Khi bị xem nhẹ và chỉ "làm theo lệnh", tính tích cực, sáng tạo của họ bị triệt tiêu.',
-            '<strong>Bệnh sùng bái cá nhân:</strong> C tự thần thánh hóa bản thân, tách rời lợi ích và trí tuệ của mình ra khỏi sức mạnh tổng hợp của đội ngũ quần chúng.',
+            '<strong>Triệt tiêu động lực tập thể:</strong> Các thành viên CLB là lực lượng trực tiếp tham gia tổ chức và vận hành chiến dịch. Khi ý kiến của họ không được tôn trọng, tính tích cực và sáng tạo sẽ suy giảm.',
+            '<strong>Biểu hiện của chủ nghĩa cá nhân:</strong> C xem nhẹ vai trò của tập thể, đặt quan điểm cá nhân lên trên lợi ích chung, từ đó xa rời sức mạnh của cộng đồng.',
           ],
         },
       ]}
@@ -465,7 +517,18 @@ function SectionCaseStudyP2() {
         {
           type: 'highlight',
           label: '◉ Bài học rút ra',
-          html: 'Quần chúng luôn là "người thầy vĩ đại". Lãnh tụ chỉ là sản phẩm của phong trào. Chiến dịch của C thất bại vì C quên mất rằng: <strong>Lãnh tụ là người dẫn đường, nhưng chính tập thể mới là người hiện thực hóa mục tiêu.</strong>',
+          html: `
+            Quần chúng nhân dân là lực lượng quyết định đối với sự thành công của phong trào.
+            <br/><br/>
+            Lãnh tụ xuất hiện từ phong trào quần chúng và giữ vai trò định hướng, tổ chức, lãnh đạo.
+            <br/><br/>
+            Thất bại của C cho thấy rằng:
+            <strong>
+              chỉ khi biết phát huy vai trò của tập thể
+              và kết hợp đúng đắn giữa lãnh đạo với quần chúng
+              thì mục tiêu chung mới có thể đạt được.
+            </strong>
+          `,
         },
       ]}
     />
